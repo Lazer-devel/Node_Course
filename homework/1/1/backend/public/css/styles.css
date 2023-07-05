@@ -1,0 +1,28 @@
+.app {
+  width: 100vw;
+  height: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: start; }
+
+.container {
+  margin-top: 20px;
+  padding: 10px;
+  border: 2px solid #1be1cd;
+  border-radius: 25px; }
+
+.header {
+  margin: 0;
+  text-align: center; }
+
+.candidates-list {
+  display: flex;
+  padding: 5px;
+  column-gap: 20px; }
+
+.candidate__title {
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+
+/*# sourceMappingURL=styles.css.map */

@@ -1,41 +1,45 @@
-import fs from "fs/promises";
-import express from "express";
-import cors from "cors";
+import fs from 'fs/promises'
+import express from 'express'
+import path from 'path'
 
-console.log("start app");
-const app = express();
-const path = `./src/elections.json`;
-let elections: Map<string, { name: string; votes: number }>;
+console.log('start app')
+const app = express()
+const electionsPath = `./src/elections.json`
 
-app.use(express.json());
-app.use(cors());
+let elections: Map<string, { name: string; votes: number }>
 
-fs.readFile(path, {
-  encoding: "utf-8",
+app.use(express.json())
+app.use(express.static(path.join(__dirname, '../public')))
+
+fs.readFile(electionsPath, {
+  encoding: 'utf-8',
 }).then((initData: string) => {
-  console.log(Object.entries(JSON.parse(initData)));
-  elections = new Map(Object.entries(JSON.parse(initData)));
-  app.listen(10001);
-  console.log("Server start listen port 10001");
-});
+  elections = new Map(Object.entries(JSON.parse(initData)))
+  app.listen(10001)
+  console.log('Server start listen port 10001')
+})
 
-app.get("/variants", (_, res) => {
-  console.log("get /variants");
+app.get('/', (_, res) => {
+  res.sendFile(path.join(__dirname, '../public/html/index.html'))
+})
+
+app.get('/variants', (_, res) => {
   const variants = [...elections.entries()].map((arr) => {
-    return { id: arr[0], name: arr[1].name };
-  });
-  res.json(variants);
-});
+    return { id: arr[0], name: arr[1].name }
+  })
+  res.json(variants)
+})
 
-app.post("/stat", (_, res) => {
-  console.log("post /stat");
-  res.json(Object.fromEntries(elections));
-});
+app.post('/stat', (_, res) => {
+  res.json(Object.fromEntries(elections))
+})
 
-app.post("/vote", (req, res) => {
-  console.log("get /vote");
-  elections.get(req.body.id)!.votes++;
-  fs.writeFile(path, JSON.stringify(Object.fromEntries(elections))).then(() =>
-    res.send()
-  );
-});
+app.post('/vote', (req, res) => {
+  elections.get(req.body.id)!.votes++
+  fs.writeFile(
+    electionsPath,
+    JSON.stringify(Object.fromEntries(elections))
+  ).then(() => res.send())
+
+  res.json(Object.fromEntries(elections))
+})
