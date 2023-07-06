@@ -21,6 +21,44 @@ async function init() {
   variants.forEach((candidate) => {
     list.append(createCandidate(candidate, statistic))
   })
+
+  const downloadBtn = document.getElementsByClassName('download-btn')
+
+  Array.from(downloadBtn).forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const fileType = btn.getAttribute('data-ext')
+
+      let Accept = getAcceptValue(fileType)
+
+      const response = await fetch('/downloadStat', {
+        method: 'POST',
+        headers: { Accept },
+      })
+      const fileUrl = window.URL.createObjectURL(await response.blob())
+
+      const link = document.createElement('a')
+      link.href = fileUrl
+      link.setAttribute('download', `statistic.${fileType}`)
+
+      document.body.append(link)
+      link.click()
+      link.parentNode.removeChild(link)
+    })
+  })
+}
+
+function getAcceptValue(fileType) {
+  switch (fileType) {
+    case 'xml':
+      return 'application/xml'
+    case 'json':
+      return 'application/json'
+    case 'html':
+      return 'text/html'
+
+    default:
+      return 'text/plain'
+  }
 }
 
 function createCandidate(candidate, statistic) {

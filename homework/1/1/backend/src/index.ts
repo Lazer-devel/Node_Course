@@ -2,7 +2,8 @@ import fs from 'fs/promises'
 import express from 'express'
 import path from 'path'
 
-console.log('start app')
+import statToHtml from './utils'
+
 const app = express()
 const electionsPath = `./src/elections.json`
 
@@ -21,6 +22,25 @@ fs.readFile(electionsPath, {
 
 app.get('/', (_, res) => {
   res.sendFile(path.join(__dirname, '../public/html/index.html'))
+})
+
+app.post('/downloadStat', (req, res) => {
+  switch (req.headers.accept) {
+    case 'text/html':
+      return res.send(statToHtml(JSON.stringify([...elections.values()])))
+    case 'application/xml': {
+      const xmlData: string = [...elections.values()]
+        .map(
+          (el) =>
+            `<result><name>${el.name}</name><votes>${el.votes}</votes></result>`
+        )
+        .join('')
+
+      return res.send(`<elections>${xmlData}</elections>`)
+    }
+    default:
+      return res.json([...elections.values()])
+  }
 })
 
 app.get('/variants', (_, res) => {
