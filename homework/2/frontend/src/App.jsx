@@ -1,7 +1,7 @@
 import 'react-dropdown/style.css'
 import './App.scss'
 
-import ReqConstructor from './components/ReqConstructor'
+import ReqConstructor from './components/req-constructor/ReqConstructor'
 import SavedRequests from './components/SavedRequests'
 import { useState } from 'react'
 

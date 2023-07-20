@@ -1,5 +1,6 @@
 $text-color: #292925ed;
 $border-color: #292925ed;
+$inputFieldLength: 170px;
 
 .container {
   padding: 10px;
@@ -15,7 +16,7 @@ $border-color: #292925ed;
   padding: 0px;
   margin: 0px;
 
-  &__request-wrapper {
+  &__request {
     font-size: 10px;
     padding: 5px;
     display: flex;
@@ -35,6 +36,7 @@ $border-color: #292925ed;
   flex-direction: column;
   row-gap: 10px;
   border: 1px solid rgba(41, 41, 37, 0.4);
+  border-radius: 15px;
   &__container {
     display: flex;
     column-gap: 10px;
@@ -55,6 +57,18 @@ $border-color: #292925ed;
     row-gap: 5px;
   }
 
+  &__body-wrapper {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+  }
+  &__body-content {
+    min-height: 50px;
+    overflow-y: auto;
+    word-wrap: break-word;
+    resize: none;
+  }
   &__control-btns {
     justify-self: flex-end;
     display: flex;
@@ -80,6 +94,39 @@ $border-color: #292925ed;
   }
 }
 
+.kve {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__input {
+    flex-basis: $inputFieldLength;
+  }
+
+  &__dropdown {
+    padding: 3px;
+    flex-basis: $inputFieldLength;
+    border: 1px solid $border-color;
+    &-control {
+      padding: 0px 25px 0px 0px;
+      border: none;
+      color: $text-color;
+      font-size: inherit;
+      font-weight: inherit;
+    }
+    &-arrow {
+      top: 6px;
+    }
+  }
+}
+
 .button {
   padding: 5px;
   background-color: #80bdff;
@@ -87,7 +134,7 @@ $border-color: #292925ed;
   border: none;
   border-radius: 5px;
   font-size: 12px;
-  font-weight: inherit;
+  font-weight: 700;
   cursor: pointer;
   &:active {
     transition: all 200ms ease-out;
@@ -96,8 +143,31 @@ $border-color: #292925ed;
 }
 
 .label {
-  font-size: 12px;
+  font-size: 14px;
   color: $text-color;
+  font-weight: 700;
+
+  &-btn {
+    font-weight: 400;
+    cursor: pointer;
+
+    &--small {
+      font-size: 12px;
+    }
+    &--normal {
+      font-size: 14px;
+    }
+    &--green {
+      color: #499680;
+    }
+    &--red {
+      color: #ff2024;
+    }
+
+    &--bold {
+      font-weight: 500;
+    }
+  }
 }
 
 .input {
@@ -105,6 +175,6 @@ $border-color: #292925ed;
   border-radius: 2px;
   padding: 3px;
   font-size: 12px;
-  font-weight: inherit;
+  font-weight: 400;
   color: $text-color;
 }
