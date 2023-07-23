@@ -1,8 +1,5 @@
 function Response({ data }) {
-  console.log(data)
   const { status, headers, body } = data
-
-  console.log(status)
   return (
     status && (
       <div className="response">

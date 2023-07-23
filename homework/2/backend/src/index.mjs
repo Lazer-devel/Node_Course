@@ -9,7 +9,7 @@ app.use(express.json())
 
 app.post('/fetch', async (req, res) => {
   const { url, method, headers, body } = req.body
-
+  console.log(headers)
   const response = await fetch(url, {
     method,
     headers,

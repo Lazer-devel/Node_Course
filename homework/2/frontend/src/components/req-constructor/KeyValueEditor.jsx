@@ -2,29 +2,64 @@ import { nanoid } from 'nanoid'
 import Dropdown from 'react-dropdown'
 
 function KeyValueEditor({ title, initData, setInitData, nameList }) {
-  const createNameField = (name) => {
+  console.log(`AAAAAAAAAAAA ${[...initData.keys()]}`)
+  const createNameField = (name, id) => {
     return nameList ? (
       <Dropdown
         className="kve__dropdown"
         controlClassName="kve__dropdown-control"
         arrowClassName="kve__dropdown-arrow"
         options={nameList}
+        value={name}
+        onChange={({ value }) => {
+          setInitData((prev) =>
+            new Map(prev).set(id, { name: value, value: prev.get(id).value })
+          )
+        }}
       />
     ) : (
-      <input className=" kve__input kve__input-input input" type="text" />
+      <input
+        className=" kve__input input"
+        type="text"
+        value={name}
+        onChange={(e) =>
+          setInitData((prev) =>
+            new Map(prev).set(id, {
+              name: e.target.value,
+              value: prev.get(id).value,
+            })
+          )
+        }
+      />
     )
   }
   return (
     <div className="kve">
       <label className="kve__label label">{title}</label>
-      {initData.map(({ name, value, id }) => (
+      {[...initData.keys()].map((id) => (
         <div className="kve__content" key={id}>
-          {createNameField(name)}
-          <input className="kve__input input" type="text" />
+          {createNameField(initData.get(id).name, id)}
+          <input
+            className="kve__input input"
+            type="text"
+            value={initData.get(id).value}
+            onChange={(e) =>
+              setInitData((prev) =>
+                new Map(prev).set(id, {
+                  name: prev.get(id).name,
+                  value: e.target.value,
+                })
+              )
+            }
+          />
           <span
             className="kve__btn label-btn label-btn--red label-btn--small"
             onClick={() =>
-              setInitData((prev) => prev.filter((header) => header.id !== id))
+              setInitData((prev) => {
+                const newState = new Map(prev)
+                newState.delete(id)
+                return newState
+              })
             }
           >
             Удалить
@@ -34,10 +69,9 @@ function KeyValueEditor({ title, initData, setInitData, nameList }) {
       <span
         className="kve__btn label-btn label-btn--green label-btn--normal label-btn--bold"
         onClick={() =>
-          setInitData((prev) => [
-            ...prev,
-            { name: '', value: '', id: nanoid() },
-          ])
+          setInitData((prev) =>
+            new Map(prev).set(nanoid(), { name: '', value: '' })
+          )
         }
       >
         Добавить
@@ -46,10 +80,3 @@ function KeyValueEditor({ title, initData, setInitData, nameList }) {
   )
 }
 export default KeyValueEditor
-/*  className="request-constructor__method-dropdown"
-            controlClassName="request-constructor__method-dropdown-control"
-            menuClassName="request-constructor__method-dropdown-menu"
-            arrowClassName="request-constructor__method-dropdown-arrow"
-            options={methods}
-            value={method}
-            onChange={({ value }) => setMethod(value)} */
