@@ -43,7 +43,7 @@ function ReqConstructor() {
     const proxyReq =
       method === 'GET' ? createProxyGetReq(hdrs) : createProxyNonGetReq(hdrs)
 
-    const res = await fetch('http://localhost:10000/fetch', {
+    const res = await fetch('/fetch', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
