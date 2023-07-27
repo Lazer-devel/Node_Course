@@ -27,6 +27,15 @@ export const reqHeaders = [
 export const preSavedReq = [
   {
     id: nanoid(),
+    name: 'Загрузить onliner',
+    url: 'https://www.onliner.by/',
+    method: 'GET',
+    headers: new Map(),
+    params: new Map(),
+    body: '',
+  },
+  {
+    id: nanoid(),
     name: 'Получить картинку',
     url: 'https://via.placeholder.com/600/771796',
     method: 'GET',

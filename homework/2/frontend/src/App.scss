@@ -115,6 +115,11 @@ $inputFieldLength: 170px;
 }
 
 .response {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  overflow-x: hidden;
+  overflow-y: auto;
   &__body {
     &-tab {
       word-wrap: break-word;

@@ -2,7 +2,11 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import 'react-tabs/style/react-tabs.css'
 
 function Response({ data }) {
-  const { status, headers, body } = data
+  const { status, headers, body, err } = data
+
+  if (err) {
+    return <h1>Ошибка: {err}</h1>
+  }
   const isPreview = () => {
     const contentType = headers['content-type']
     return (
@@ -11,9 +15,20 @@ function Response({ data }) {
     )
   }
 
-  const createImage = () => {
-    return <img src={body} style={{ width: '200px', height: '200px' }} alt="" />
+  const createPreview = () => {
+    if (headers['content-type'].includes('image')) {
+      return (
+        <img src={body} style={{ width: '400px', height: '400px' }} alt="" />
+      )
+    }
+    return (
+      <div
+        dangerouslySetInnerHTML={{ __html: body }}
+        style={{ position: 'relative' }}
+      />
+    )
   }
+
   return (
     status && (
       <div className="response">
@@ -21,12 +36,19 @@ function Response({ data }) {
         <label className="response__status label">
           Статус ответа: {status}
         </label>
-        <ul className="response__header-list">
-          Заголовки ответа:
-          {Object.keys(headers).map((key) => (
-            <li className="response__header">{`${key}: ${headers[key]}`}</li>
-          ))}
-        </ul>
+        <div className="response__header-wrapper">
+          <label className="response__header-title label">
+            Заголовки ответа:
+          </label>
+          <ul className="response__header-list">
+            {Object.keys(headers).map((key) => (
+              <li
+                className="response__header"
+                key={key}
+              >{`${key}: ${headers[key]}`}</li>
+            ))}
+          </ul>
+        </div>
         <div className="response__body-wrapper">
           <h3 className="response__body-header">Тело ответа:</h3>
           <Tabs className="response__body-tab">
@@ -35,7 +57,7 @@ function Response({ data }) {
               {isPreview() && <Tab>Предпросмотр</Tab>}
             </TabList>
             <TabPanel>{body}</TabPanel>
-            {isPreview() && <TabPanel>{createImage()}</TabPanel>}
+            {isPreview() && <TabPanel>{createPreview()}</TabPanel>}
           </Tabs>
         </div>
       </div>
