@@ -2,7 +2,6 @@ import { nanoid } from 'nanoid'
 import Dropdown from 'react-dropdown'
 
 function KeyValueEditor({ title, initData, setInitData, nameList }) {
-  console.log(`AAAAAAAAAAAA ${[...initData.keys()]}`)
   const createNameField = (name, id) => {
     return nameList ? (
       <Dropdown

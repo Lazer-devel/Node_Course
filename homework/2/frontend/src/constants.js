@@ -1,3 +1,5 @@
+import { nanoid } from 'nanoid'
+
 export const methods = ['GET', 'POST', 'PUT', 'DELETE']
 export const reqHeaders = [
   'A-IM',
@@ -24,23 +26,75 @@ export const reqHeaders = [
 
 export const preSavedReq = [
   {
-    id: '1',
-    url: 'https://petstore.swagger.io/v2/pet/0',
+    id: nanoid(),
+    name: 'Получить картинку',
+    url: 'https://via.placeholder.com/600/771796',
     method: 'GET',
     headers: new Map(),
     params: new Map(),
     body: '',
   },
   {
-    id: '2',
+    id: nanoid(),
+    name: 'Получить животное (json)',
+    url: 'https://petstore.swagger.io/v2/pet/100',
+    method: 'GET',
+    headers: new Map(),
+    params: new Map(),
+    body: '',
+  },
+  {
+    id: nanoid(),
+    name: 'Получить животное (xml)',
+    url: 'https://petstore.swagger.io/v2/pet/100',
+    method: 'GET',
+    headers: new Map([
+      [nanoid(), { name: 'Accept', value: 'application/xml' }],
+    ]),
+    params: new Map(),
+    body: '',
+  },
+  {
+    id: nanoid(),
+    name: 'Создать животное (xml)',
     url: 'https://petstore.swagger.io/v2/pet',
     method: 'POST',
     headers: new Map([
-      ['1qwer', { name: 'Content-type', value: 'application/json' }],
+      [nanoid(), { name: 'Content-type', value: 'application/xml' }],
+      [nanoid(), { name: 'Accept', value: 'application/xml' }],
+    ]),
+    params: new Map(),
+    body: `<?xml version="1.0" encoding="UTF-8"?>
+    <Pet>
+      <id>100</id>
+      <Category>
+        <id>0</id>
+        <name>string</name>
+      </Category>
+      <name>doggie</name>
+      <photoUrls>
+        <photoUrl>string</photoUrl>
+      </photoUrls>
+      <tags>
+        <Tag>
+          <id>0</id>
+          <name>string</name>
+        </Tag>
+      </tags>
+      <status>available</status>
+    </Pet>`,
+  },
+  {
+    id: nanoid(),
+    name: 'Cоздать животное (json)',
+    url: 'https://petstore.swagger.io/v2/pet',
+    method: 'POST',
+    headers: new Map([
+      [nanoid(), { name: 'Content-type', value: 'application/json' }],
     ]),
     params: new Map(),
     body: `{
-      "id": 0,
+      "id": 100,
       "category": {
         "id": 0,
         "name": "string"
@@ -59,15 +113,16 @@ export const preSavedReq = [
     }`,
   },
   {
-    id: '3',
+    id: nanoid(),
+    name: 'Изменить животное (json)',
     url: 'https://petstore.swagger.io/v2/pet',
     method: 'PUT',
     headers: new Map([
-      ['rqwrqr1', { name: 'Content-type', value: 'application/json' }],
+      [nanoid(), { name: 'Content-type', value: 'application/json' }],
     ]),
     params: new Map(),
     body: `{
-      "id": 0,
+      "id": 100,
       "category": {
         "id": 0,
         "name": "string"
@@ -86,8 +141,9 @@ export const preSavedReq = [
     }`,
   },
   {
-    id: 'dasfafa4',
-    url: 'https://petstore.swagger.io/v2/pet/0',
+    id: nanoid(),
+    name: 'Удалить животное',
+    url: 'https://petstore.swagger.io/v2/pet/100',
     method: 'DELETE',
     headers: new Map(),
     params: new Map(),

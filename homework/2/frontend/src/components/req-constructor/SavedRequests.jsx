@@ -4,6 +4,7 @@ function SavedRequests({
   setMethod,
   setHeaders,
   setParams,
+  setResponse,
   bodyRef,
 }) {
   return (
@@ -17,9 +18,16 @@ function SavedRequests({
             setMethod(req.method)
             setHeaders(req.headers)
             setParams(req.params)
+            setResponse({})
+            if (bodyRef.current) {
+              bodyRef.current.value = `${req.body}`
+            }
           }}
         >
-          <label className="saved-requests__request-title label">
+          <label className="saved-requests__request-name label">
+            {req.name}
+          </label>
+          <label className="saved-requests__request-method label">
             Метод: {req.method}
           </label>
           <label className="saved-requests__request-url label">{req.url}</label>

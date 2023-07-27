@@ -1,10 +1,14 @@
-function streamToString(stream) {
-  const chunks = []
-  return new Promise((resolve, reject) => {
-    stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-    stream.on('error', (err) => reject(err))
-    stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')))
-  })
-}
+export async function createProxyResponse(res) {
+  const headers = Object.fromEntries(res.headers)
+  const buffer = Buffer.from(await res.arrayBuffer())
+  const body =
+    headers['content-type'] && headers['content-type'].includes('image')
+      ? `data:${headers['content-type']};base64,${buffer.toString('base64')}`
+      : buffer.toString('utf8')
 
-export default streamToString
+  return {
+    status: res.status,
+    headers,
+    body,
+  }
+}

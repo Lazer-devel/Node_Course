@@ -14,9 +14,9 @@ function ReqConstructor() {
   const [headers, setHeaders] = useState(new Map())
   const [params, setParams] = useState(new Map())
   const [response, setResponse] = useState({})
+  const [name, setName] = useState('')
   const bodyRef = useRef(null)
 
-  console.log(headers)
   const createProxyGetReq = (headers) => {
     const urlWithParams = `${url}?${Array.from(params.values())
       .filter((par) => par.name && par.value)
@@ -61,9 +61,21 @@ function ReqConstructor() {
         setMethod={setMethod}
         setHeaders={setHeaders}
         setParams={setParams}
+        setResponse={setResponse}
+        bodyRef={bodyRef}
       />
       <div className="request-constructor">
         <div className="request-constructor__container">
+          <div className="request-constructor__name-wrapper">
+            <label className="request-constructor__name-label label">Имя</label>
+            <input
+              className="request-constructor__name-input input"
+              type="text"
+              placeholder="Имя запроса"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            ></input>
+          </div>
           <div className="request-constructor__method-wrapper">
             <label className="request-constructor__method-label label">
               Метод
@@ -89,17 +101,19 @@ function ReqConstructor() {
             ></input>
           </div>
         </div>
-        {method !== 'GET' && (
-          <div className="request-constructor__body-wrapper">
-            <label className="request-constructor__body-label label">
-              Тело запроса
-            </label>
-            <textarea
-              className="request-constructor__body-content input"
-              ref={bodyRef}
-            ></textarea>
-          </div>
-        )}
+        <div
+          className="request-constructor__body-wrapper"
+          style={{ display: method === 'GET' ? 'none' : 'flex' }}
+        >
+          <label className="request-constructor__body-label label">
+            Тело запроса
+          </label>
+          <textarea
+            className="request-constructor__body-content input"
+            ref={bodyRef}
+          ></textarea>
+        </div>
+
         {method === 'GET' && (
           <KeyValueEditor
             title={'Параметры'}
@@ -118,12 +132,13 @@ function ReqConstructor() {
             className="request-constructor__save-btn button"
             type="button"
             value="Сохранить запрос"
-            disabled={!url}
+            disabled={!(url && name)}
             onClick={() => {
               setSavedReq((prev) => [
                 ...prev,
                 {
                   id: nanoid(),
+                  name,
                   method,
                   url,
                   headers,
@@ -137,6 +152,7 @@ function ReqConstructor() {
             className="request-constructor__send-btn button"
             type="button"
             value="Отправить запрос"
+            disabled={!(method && url)}
             onClick={sendProxyReq}
           />
           <input
@@ -151,6 +167,7 @@ function ReqConstructor() {
               setMethod(methods[0])
               setHeaders(new Map())
               setParams(new Map())
+              setResponse({})
             }}
           />
         </div>
