@@ -15,18 +15,14 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.static(path.resolve('public')))
 app.use(express.urlencoded({ extended: true }))
 
-app.get('/auth', (req, res) => {
+app.get('/auth', (_, res) => {
   console.log('GET')
-  const { login, password } = req.query
   res.render('auth-page', {
-    layout: 'auth-layout',
-    login: login?.toString(),
-    password: password?.toString(),
-    err: login ? 'Ошибка авторизации' : ''
+    layout: 'auth-layout'
   })
 })
 
-app.get('/successAuth', (req, res) => {
+app.get('/successAuth', (_, res) => {
   console.log('success auth')
   res.render('success-auth-page', {
     layout: 'auth-layout'
@@ -40,7 +36,12 @@ app.post('/validate', (req, res) => {
     res.redirect('/successAuth')
     return
   }
-  res.redirect(`/auth?login=${login}&password=${password}`)
+  res.render('auth-page', {
+    layout: 'auth-layout',
+    login: login?.toString(),
+    password: password?.toString(),
+    err: login ? 'Ошибка авторизации' : ''
+  })
 })
 
 app.listen(10002)
