@@ -9,14 +9,10 @@ if (argv.length !== 3) {
 
 const folderPath = argv[PATH_ARG]
 
-// синхронная проверка, тк нечего выполнять в асинхронном режиме
-if (!isFolder(folderPath)) {
-  exit(0)
-}
-
 isFolder(folderPath).then((val) => {
   val ? null : exit(0)
 })
+
 console.log(`Сканирование директории: ${folderPath}`)
 
 startScan(folderPath).then(() => {
