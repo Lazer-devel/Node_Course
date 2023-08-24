@@ -14,6 +14,9 @@ if (!isFolder(folderPath)) {
   exit(0)
 }
 
+isFolder(folderPath).then((val) => {
+  val ? null : exit(0)
+})
 console.log(`Сканирование директории: ${folderPath}`)
 
 startScan(folderPath).then(() => {

@@ -3,19 +3,17 @@ import path from 'path'
 import zlib from 'zlib'
 import os from 'os'
 
-export function isFolder(path) {
-  if (!fs.existsSync(path)) {
-    console.log('Указанного пути несуществует')
-    return false
-  }
-
+export async function isFolder(path) {
   try {
-    if (!fs.statSync(path).isDirectory()) {
+    await fs.promises.access(path, fs.constants.R_OK | fs.constants.W_OK)
+    const stats = await fs.promises.stat(path)
+
+    if (!stats.isDirectory()) {
       console.log('Указанный путь не является директорией')
       return false
     }
   } catch (err) {
-    console.log('Ошибка получения информации о файле')
+    console.log(err.message)
     return false
   }
   return true
