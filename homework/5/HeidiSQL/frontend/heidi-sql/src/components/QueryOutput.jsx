@@ -1,19 +1,13 @@
-import { useRef } from 'react'
-
 // КАК динамически передать значение в css при первом рендере кроме inline
 
 function QueryOutput({ output }) {
-  const tableRef = useRef(null)
-
   const { status, data } = output
 
   const createTable = () => {
     const columnCount = Object.keys(data[0]).length
-    console.log(tableRef.current)
     return (
       <table
         className="query__output-content"
-        ref={tableRef}
         style={{
           gridTemplateColumns: `repeat(${columnCount}, minmax(150px, 1fr))`,
         }}
