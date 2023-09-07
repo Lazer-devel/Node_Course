@@ -8,6 +8,16 @@ import { useState } from 'react'
 function Schema({ name, tables }) {
   const [isOpen, setOpen] = useState(false)
 
+  const getIconByType = (type) => {
+    switch (type) {
+      case 'VIEW':
+        return viewIcon
+      case 'TABLE':
+        return tableIcon
+      default:
+        throw new Error('Invalid table type')
+    }
+  }
   return (
     <div className="panel__schema-wrapper">
       <div className="panel__schema-header">
@@ -28,10 +38,10 @@ function Schema({ name, tables }) {
       </div>
 
       <div className="panel__schema-table-list">
-        {tables.map((table) => {
+        {tables.map(({ name, type }) => {
           return (
             <CSSTransition
-              key={table}
+              key={name}
               in={isOpen}
               classNames={{
                 enterActive: 'animate__animated animate__lightSpeedInLeft',
@@ -40,13 +50,13 @@ function Schema({ name, tables }) {
               timeout={500}
               unmountOnExit
             >
-              <div key={table} className="panel__schema-table-wrapper">
+              <div className="panel__schema-table-wrapper">
                 <img
                   className="panel__schema-table-icon icon"
-                  src={schemaIcon}
+                  src={getIconByType(type)}
                   alt="table type"
                 />
-                <span className="panel__schema-table-title">{table}</span>
+                <span className="panel__schema-table-title">{name}</span>
               </div>
             </CSSTransition>
           )

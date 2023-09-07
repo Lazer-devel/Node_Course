@@ -3,6 +3,7 @@ import './App.scss'
 import 'animate.css'
 import Panel from './components/Panel'
 import QueryInput from './components/QueryInput'
+import QueryOutput from './components/QueryOutput'
 
 function App() {
   const [output, setOutput] = useState('')
@@ -10,8 +11,8 @@ function App() {
     <div className="app" id="app">
       <Panel />
       <div className="query">
-        <QueryInput />
-        <div className="query__output"></div>
+        <QueryInput setOutput={setOutput} />
+        <QueryOutput output={output} />
       </div>
     </div>
   )

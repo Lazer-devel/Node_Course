@@ -1,20 +1,20 @@
-$primary-color: #478de9;
+$rootPadding: 5px;
+$panelWidth: 300px;
+$appColGap: 5px;
 
 .app {
   position: relative;
-  flex: 1 1 auto;
-  width: 100%;
-  height: 100%;
-
+  height: inherit;
+  width: inherit;
   display: flex;
+  column-gap: $appColGap;
 }
 
 .panel {
-  flex: 0 0 300px;
+  flex: 0 0 $panelWidth;
   height: 100%;
   max-width: 300px;
-  padding: 5px;
-
+  padding: $rootPadding;
   display: flex;
   flex-direction: column;
   row-gap: 1rem;
@@ -81,11 +81,12 @@ $primary-color: #478de9;
 }
 
 .query {
+  position: relative;
   flex: 1 1 auto;
-  height: 100%;
-  background-color: aqua;
-
+  padding: $rootPadding;
+  max-width: calc(100% - $panelWidth - $rootPadding * 4 - $appColGap);
   display: flex;
+  row-gap: 5px;
   flex-direction: column;
 
   &__input {
@@ -93,7 +94,6 @@ $primary-color: #478de9;
       flex: 1 1 auto;
       display: flex;
       flex-direction: column;
-      padding: 5px;
       row-gap: 5px;
     }
 
@@ -121,8 +121,40 @@ $primary-color: #478de9;
     }
   }
   &__output {
-    flex: 0 0 300px;
-    background-color: yellow;
+    position: relative;
+    flex: 0 0 400px;
+    overflow: auto;
+    padding: 5px;
+
+    &-content {
+      display: grid;
+      border-collapse: collapse;
+      row-gap: 5px;
+
+      th {
+        position: sticky;
+      }
+      thead,
+      tbody,
+      tr {
+        display: contents;
+      }
+
+      td {
+        color: #000000;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        overflow: hidden;
+        white-space: break-spaces;
+        text-align: center;
+      }
+      tr:nth-child(even) td {
+        background: #666666;
+      }
+    }
   }
 }
 

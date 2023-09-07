@@ -6,16 +6,15 @@ import downloadIcon from '../assets/download.svg'
 function Panel() {
   const [schemas, setSchemas] = useState([])
 
-
   const getSchemas = async () => {
-    const response = await fetch('http://localhost:10005/schemas', {
+    const response = await fetch('/schemas', {
       method: 'GET',
       cache: 'no-store',
     })
     const schemas = await response.json()
     setSchemas(schemas)
   }
-  
+
   useEffect(() => {
     getSchemas()
   }, [])
@@ -30,11 +29,10 @@ function Panel() {
         />
       </div>
       <div className="panel__content">
-      {schemas.map(({name, tables}) => (
-        <Schema key={name} name={name} tables={tables} />
-      ))}
+        {schemas.map(({ name, tables }) => (
+          <Schema key={name} name={name} tables={tables} />
+        ))}
       </div>
-
     </div>
   )
 }

@@ -6,17 +6,19 @@ function QueryInput({ setOutput }) {
   const sendQueryHandle = async () => {
     let response
     try {
-      response = await fetch('http://localhost:31412/query', {
+      response = await fetch('/query', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(qeuryRef.current.value),
+        body: JSON.stringify({ query: qeuryRef.current.value }),
       })
     } catch (err) {
-      // return setOutput(err.message)
+      console.log(err)
+      return setOutput(err.message)
     }
-    //  setOutput(await response.json())
+    const result = await response.json()
+    setOutput(result)
   }
   return (
     <div className="query__input-wrapper">
