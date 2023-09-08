@@ -5,10 +5,13 @@ function FileItem({ file, onLoadFailed, isHeader = false }) {
 
   const downloadFile = async () => {
     try {
-      const res = await fetch(`/download?filename=${name}`, {
-        method: 'GET',
-        cache: 'no-store',
-      })
+      const res = await fetch(
+        `http://localhost:10004/download?filename=${name}`,
+        {
+          method: 'GET',
+          cache: 'no-store',
+        }
+      )
       if (res.status === 200) {
         const blob = await res.blob()
         const href = window.URL.createObjectURL(blob)

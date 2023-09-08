@@ -16,15 +16,15 @@ const EXPRESS_PORT = 10004
 const WEBSOCKET_SERVER_PORT = 55555
 
 const app = express()
-app.use(express.static(path.resolve(__dirname, './client/build')))
-
+//app.use(express.static(path.resolve(__dirname, './client/build')))
+app.use(cors())
 const wss = new WebSocketServer({ port: WEBSOCKET_SERVER_PORT })
 const fileIndex = createIndexFiles()
 const uploadStatus = new Map() // key:uploadId - value:ws
 
-app.get('/', (_, res) => {
+/*app.get('/', (_, res) => {
   res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-})
+})*/
 
 app.get('/getFileList', (_, res) => {
   res.setHeader('Cache-Control', 'public, max-age=0')
