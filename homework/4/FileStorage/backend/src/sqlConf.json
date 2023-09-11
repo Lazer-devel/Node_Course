@@ -1,0 +1,9 @@
+{
+  "host": "167.99.141.158",
+  "user": "node",
+  "password": "5034630kK)",
+  "database": "FileStorage",
+  "multipleStatements": true,
+  "connectionLimit": 5,
+  "waitForConnections": true
+}

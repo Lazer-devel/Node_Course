@@ -1,24 +1,41 @@
 import { WebSocketServer } from 'ws'
-import path from 'path'
 import busboy from 'busboy'
 import express from 'express'
 import { nanoid } from 'nanoid'
-import fs, { write } from 'fs'
+import fs from 'fs'
 import cors from 'cors'
+import mysql from 'mysql2'
+import path from 'path'
+import bcrypt from 'bcrypt'
+import nodemailer from 'nodemailer'
+
 import {
   createIndexFiles,
   createFileConfig,
-  __dirname,
   createProtocol,
+  createLetter,
 } from './utils.mjs'
+import { EXPRESS_PORT, WEBSOCKET_SERVER_PORT, __dirname } from './constants.mjs'
 
-const EXPRESS_PORT = 10004
-const WEBSOCKET_SERVER_PORT = 55555
+const sqlConf = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, './sqlConf.json'))
+)
+const dbPool = mysql.createPool(sqlConf).promise()
+
+var mailTransporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'niklazq9@gmail.com',
+    pass: 'xudqhogqtfqgojqh',
+  },
+})
 
 const app = express()
-//app.use(express.static(path.resolve(__dirname, './client/build')))
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
+app.use(express.static(path.resolve(__dirname, './static')))
 app.use(cors())
-const wss = new WebSocketServer({ port: WEBSOCKET_SERVER_PORT })
+
 const fileIndex = createIndexFiles()
 const uploadStatus = new Map() // key:uploadId - value:ws
 
@@ -107,7 +124,6 @@ app.post('/upload', (req, res) => {
 
     file.pipe(writer)
   })
-
   const bbOnField = (name, value) => {
     switch (name) {
       case 'comment':
@@ -136,6 +152,71 @@ app.post('/upload', (req, res) => {
   req.pipe(bb)
 })
 
+app.post('/reg', async (req, res) => {
+  const { email, password } = req.body
+
+  const [row, _] = await dbPool.query(
+    `SELECT id FROM users WHERE login = '${email}'`
+  )
+  if (row.length) {
+    res.json({ status: 'err', content: 'login already exist' })
+    return
+  }
+  const id = await bcrypt.hash(email, 10)
+
+  try {
+    await dbPool.query(
+      `INSERT INTO users VALUES ('${id}','${email}', '${password}', 0, NOW())`
+    )
+  } catch (err) {
+    res.json({ status: 'err', content: 'invalid registration' })
+  }
+
+  mailTransporter.sendMail(createLetter(email, id), (err, info) => {
+    if (err) {
+      res.json({ status: 'err', content: 'oops, something went wrong' })
+      return
+    }
+  })
+  res.json({ status: 'ok', content: null })
+})
+
+app.get('/proofEmail', async (req, res) => {
+  const id = req.query.id
+
+  res.setHeader('Cache-control', `no-store`)
+
+  const [row, _] = await dbPool.query(
+    `SELECT id, isProofEmail FROM users WHERE id = '${id}'`
+  )
+
+  if (!row.length || row[0].isProofEmail) {
+    res.sendFile(path.resolve(__dirname, './static/errorReg.html'))
+    return
+  }
+
+  try {
+    await dbPool.query(`UPDATE users SET isProofEmail = 1 WHERE id = '${id}'`)
+    res.sendFile(path.resolve(__dirname, './static/successReg.html'))
+  } catch (err) {
+    res.status(501).send()
+  }
+})
+
+app.post('/auth', async (req, res) => {
+  const { login, password } = req.body
+  // 1 путь 2) пришёл логин и пароль
+
+  /*
+  генерирую токен и отдаю
+   */
+})
+
+app.listen(EXPRESS_PORT, () => {
+  console.log('express server started')
+})
+
+const wss = new WebSocketServer({ port: WEBSOCKET_SERVER_PORT })
 // используется только для upload поэтому без api
 wss.on('connection', (ws) => {
   const uploadId = nanoid()
@@ -150,8 +231,4 @@ wss.on('connection', (ws) => {
   }
 
   ws.on('close', wsCloseHandler)
-})
-
-app.listen(EXPRESS_PORT, () => {
-  console.log('express server started')
 })

@@ -1,9 +1,7 @@
 import fs from 'fs'
 import { nanoid } from 'nanoid'
-import { fileURLToPath } from 'url'
-import path, { dirname } from 'path'
-
-export const __dirname = dirname(fileURLToPath(import.meta.url))
+import path from 'path'
+import { __dirname } from './constants.mjs'
 
 export function createProtocol(action, data) {
   return JSON.stringify({ action, data })
@@ -39,6 +37,15 @@ export function createIndexFiles() {
     fileIndex.set(fileId, fileObj)
   })
   return fileIndex
+}
+
+export function createLetter(reciever, id) {
+  return {
+    from: 'niklazq94@gmail.com',
+    to: `${reciever}`,
+    subject: 'FileStorage Registration',
+    html: `<a href="http://localhost:10004/proofEmail?id=${id}">Click Me!</a>`,
+  }
 }
 
 function getFileConfig() {

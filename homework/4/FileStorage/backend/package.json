@@ -9,10 +9,13 @@
   "author": "Lazer",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "busboy": "^1.6.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "mysql2": "^3.6.1",
     "nanoid": "^4.0.2",
+    "nodemailer": "^6.9.5",
     "websocket-stream": "^5.5.2",
     "ws": "^8.13.0"
   }

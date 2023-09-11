@@ -1,44 +1,63 @@
 import { useState } from 'react'
+import { isValidPassword, isValidEmail, createHashPassword } from '../utils'
+import { entranceState } from '../constants'
 
-function Registration({ setRegistration }) {
+function Registration({ setEntranceState }) {
   const [password, setPassword] = useState('')
   const [provePassword, setProvePassword] = useState('')
   const [email, setEmail] = useState('')
-  const [error, setError] = useState('fasfas')
+  const [error, setError] = useState('')
+  const [isFirstStep, setFirstStep] = useState(true)
 
-  const nextStep = () => {
-    const lowerChar = /(?=.*[a-z])/
-    const upperChar = /(?=.*[A-Z])/
-    const numericChar = /(?=.*[0-9])/
-    const specChar = /(?=.*[!@#$%^&*])/
-    const length = /(?=.{8,})/
-
-    const passRegex = new RegExp(
-      `^${lowerChar.source}${upperChar.source}${numericChar.source}${specChar.source}${length.source}`
-    )
-
-    const emailRegex = new RegExp(
-      "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$"
-    )
-
-    if (!emailRegex.test(email)) {
+  const isValidateInput = () => {
+    if (!isValidEmail(email)) {
       setError('Неверно указана почта ')
-      return
+      return false
     }
 
-    if (!passRegex.test(password)) {
+    if (!isValidPassword(password)) {
       setError('Пароль должен состоять не менее чем из 8 символов и содержать')
-      return
+      return false
     }
 
     if (password !== provePassword) {
       setError('Пароли не совпадают!')
       setPassword('')
       setProvePassword('')
+      return false
     }
+    return true
   }
 
-  return (
+  const prepareRegData = async () => {
+    return JSON.stringify({
+      email,
+      password: await createHashPassword(password),
+    })
+  }
+
+  const sendRegReq = async () => {
+    if (!isValidateInput()) {
+      return
+    }
+    const response = await fetch('http://localhost:10004/reg', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: await prepareRegData(password),
+    })
+
+    const { status, content } = await response.json()
+
+    if (status === 'err') {
+      setError(content)
+      return
+    }
+    setFirstStep(false)
+  }
+
+  const createFirstStep = () => (
     <>
       <h2 className="reg__header">Регистрация</h2>
       <input
@@ -63,23 +82,42 @@ function Registration({ setRegistration }) {
         onChange={(e) => setProvePassword(e.target.value)}
       />
       <span className="reg__error">{error}</span>
-      <div className="reg__control-wrapper">
+      <div className="reg__control-wrapper reg__control-wrapper--spaces">
         <button
           className="reg__submit button"
-          onClick={() => setRegistration(false)}
+          onClick={() => setEntranceState(entranceState.auth)}
         >
           Назад
         </button>
         <button
           className="auth__submit button"
           disabled={!(email && password && provePassword)}
-          onClick={nextStep}
+          onClick={sendRegReq}
         >
           Далее
         </button>
       </div>
     </>
   )
-}
 
+  return (
+    <div className="reg">
+      {isFirstStep ? (
+        createFirstStep()
+      ) : (
+        <>
+          <h2 className="reg__header">{`Письмо было отправлено на ${email}`}</h2>
+          <div className="reg__control-wrapper">
+            <button
+              className="reg__confirm button"
+              onClick={() => setEntranceState(entranceState.auth)}
+            >
+              Ок
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
 export default Registration

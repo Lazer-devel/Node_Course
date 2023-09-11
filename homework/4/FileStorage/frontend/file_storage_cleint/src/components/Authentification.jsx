@@ -1,20 +1,14 @@
 import { useState } from 'react'
-import bcrypt from 'bcryptjs'
+import { createHashPassword } from '../utils'
+import { entranceState } from '../constants'
 
-function Authentification({ setRegistration }) {
+function Authentification({ setEntranceState }) {
   const [isAuthinProgress, setAuthProgress] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   const sendAuthData = async () => {
     setAuthProgress(true)
-    let passHash
-
-    try {
-      passHash = await bcrypt.hash(password, 10)
-    } catch (err) {
-      alert(err.message)
-    }
 
     try {
       const response = await fetch('http://localhost:1004/auth', {
@@ -24,7 +18,7 @@ function Authentification({ setRegistration }) {
         },
         body: JSON.stringify({
           email,
-          password: passHash,
+          password: createHashPassword(password),
         }),
       })
       const token = await response.json()
@@ -33,7 +27,7 @@ function Authentification({ setRegistration }) {
     }
   }
   return (
-    <>
+    <div className="auth">
       <h2 className="auth__header">Авторизация</h2>
       <div className="auth__login-wrapper">
         <label className="auth__login-label label">Почта:</label>
@@ -57,7 +51,7 @@ function Authentification({ setRegistration }) {
       </div>
       <span
         className="auth__registration-btn"
-        onClick={() => setRegistration(true)}
+        onClick={() => setEntranceState(entranceState.reg)}
       >
         Регистрация
       </span>
@@ -70,7 +64,7 @@ function Authentification({ setRegistration }) {
           Войти
         </button>
       </div>
-    </>
+    </div>
   )
 }
 
