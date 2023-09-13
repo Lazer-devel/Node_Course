@@ -1,31 +1,59 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createHashPassword } from '../utils'
-import { entranceState } from '../constants'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../hook/useAuth'
 
-function Authentification({ setEntranceState }) {
-  const [isAuthinProgress, setAuthProgress] = useState(false)
-  const [email, setEmail] = useState('')
+function Authentification() {
+  const [isAuthInProgress, setIsAuthInProgress] = useState(false)
+  const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
+  const [err, setErr] = useState(null)
+  const { signIn } = useAuth()
+  const navigate = useNavigate()
 
-  const sendAuthData = async () => {
-    setAuthProgress(true)
-
-    try {
-      const response = await fetch('http://localhost:1004/auth', {
+  useEffect(() => {
+    const checkToken = async () => {
+      const response = await fetch('/validateToken', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
         },
+        credentials: 'include',
+      })
+
+      if (response.status === 200) {
+        signIn('USER', () => navigate('/'))
+      }
+    }
+    checkToken()
+  }, [navigate, signIn])
+
+  const sendAuthData = async () => {
+    setIsAuthInProgress(true)
+    try {
+      const response = await fetch('/auth', {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        credentials: 'include',
         body: JSON.stringify({
-          email,
-          password: createHashPassword(password),
+          login,
+          password: await createHashPassword(password),
         }),
       })
-      const token = await response.json()
+      const { status, content } = await response.json()
+
+      if (status === 'ok') {
+        return signIn('USER', () => navigate('/'))
+      }
+      setErr(content)
     } catch (err) {
-      alert(err.message)
+      setErr(err.message)
     }
+    setIsAuthInProgress(false)
   }
+
   return (
     <div className="auth">
       <h2 className="auth__header">Авторизация</h2>
@@ -34,8 +62,8 @@ function Authentification({ setEntranceState }) {
         <input
           className="auth__login-input input"
           type="text"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={login}
+          onChange={(e) => setLogin(e.target.value)}
         />
       </div>
       <div className="auth__password-wrapper">
@@ -49,16 +77,14 @@ function Authentification({ setEntranceState }) {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <span
-        className="auth__registration-btn"
-        onClick={() => setEntranceState(entranceState.reg)}
-      >
+      <Link className="auth__registration-btn" to={'/entry/reg'}>
         Регистрация
-      </span>
+      </Link>
+      <span className="auth__error">{err}</span>
       <div className="auth__control-wrapper">
         <button
           className="auth__submit button"
-          disabled={isAuthinProgress || !email || !password}
+          disabled={isAuthInProgress || !login || !password}
           onClick={sendAuthData}
         >
           Войти

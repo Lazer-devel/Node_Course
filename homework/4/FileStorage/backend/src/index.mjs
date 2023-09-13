@@ -3,58 +3,185 @@ import busboy from 'busboy'
 import express from 'express'
 import { nanoid } from 'nanoid'
 import fs from 'fs'
-import cors from 'cors'
 import mysql from 'mysql2'
 import path from 'path'
 import bcrypt from 'bcrypt'
 import nodemailer from 'nodemailer'
+import cookieParser from 'cookie-parser'
 
-import {
-  createIndexFiles,
-  createFileConfig,
-  createProtocol,
-  createLetter,
-} from './utils.mjs'
+import { createFileConfig, createProtocol, createLetter } from './utils.mjs'
 import { EXPRESS_PORT, WEBSOCKET_SERVER_PORT, __dirname } from './constants.mjs'
 
 const sqlConf = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, './sqlConf.json'))
 )
-const dbPool = mysql.createPool(sqlConf).promise()
 
-var mailTransporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'niklazq9@gmail.com',
-    pass: 'xudqhogqtfqgojqh',
-  },
-})
+const mailConf = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, './mailConf.json'))
+)
+
+const dbPool = mysql.createPool(sqlConf).promise()
+var mailTransporter = nodemailer.createTransport(mailConf)
 
 const app = express()
+
+const authCheck = async (req, res, next) => {
+  if (req.cookies.token) {
+    const [rows, _] = await dbPool.query(
+      `SELECT COUNT(*) as exist FROM sessions WHERE token = '${req.cookies.token}'`
+    )
+
+    if (rows.length && rows[0].exist) {
+      dbPool.query(
+        `UPDATE sessions SET lastAccess = NOW() WHERE token = '${req.cookies.token}'`
+      )
+      return req.url.includes('validateToken') ? res.status(200).send() : next()
+    }
+  }
+  return res.status(401).send({ status: 'unauthorized' })
+}
+
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
-app.use(express.static(path.resolve(__dirname, './static')))
-app.use(cors())
+app.use(cookieParser())
+app.use(express.static(path.resolve(__dirname, './static/client')))
 
-const fileIndex = createIndexFiles()
 const uploadStatus = new Map() // key:uploadId - value:ws
 
-/*app.get('/', (_, res) => {
-  res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-})*/
-
-app.get('/getFileList', (_, res) => {
-  res.setHeader('Cache-Control', 'public, max-age=0')
-  res.json([...fileIndex.values()])
+app.get('/', (_, res) => {
+  res.sendFile(path.resolve(__dirname, './static/client/index.html'))
 })
 
-app.get('/download', (req, res) => {
+app.post('/validateToken', authCheck)
+
+app.post('/auth', async (req, res) => {
+  const { login, password } = req.body
+  const [rows, _] = await dbPool.query(
+    `SELECT login, password, isActivated FROM users WHERE login = '${login}' AND password = '${password}'`
+  )
+  // 1 запись о пользователе
+  const user = rows.shift()
+  if (!user) {
+    return res.json({ status: 'err', content: 'invalid login or password' })
+  }
+
+  if (!user.isActivated) {
+    return res.json({ status: 'err', content: 'login is inactive' })
+  }
+
+  try {
+    const token = await bcrypt.hash(login, 10)
+
+    const [rows, _] = await dbPool.query(
+      `SELECT id FROM users WHERE login = '${login}'`
+    )
+    const userId = rows.shift().id
+
+    await dbPool.query(
+      `INSERT INTO sessions VALUES ('${token}', '${userId}', NOW())  `
+    )
+
+    res
+      .cookie('token', token, {
+        secure: false,
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 1000,
+        path: '/',
+        sameSite: 'strict',
+      })
+      .send({ status: 'ok' })
+  } catch (err) {
+    res.status(501).json({ status: 'err', content: 'authorized error' })
+  }
+})
+
+app.post('/reg', async (req, res) => {
+  const { email, password } = req.body
+
+  const [rows, _] = await dbPool.query(
+    `SELECT id FROM users WHERE login = '${email}'`
+  )
+  if (rows.length) {
+    return res.json({ status: 'err', content: 'login already exist' })
+  }
+
+  const id = await bcrypt.hash(email, 10)
+
+  try {
+    await dbPool.query(
+      `INSERT INTO users VALUES ('${id}','${email}', '${password}', 0, NOW())`
+    )
+  } catch (err) {
+    return res
+      .status(501)
+      .json({ status: 'err', content: 'invalid registration' })
+  }
+
+  mailTransporter.sendMail(createLetter(email, id), (err, info) => {
+    if (err) {
+      return res
+        .status(501)
+        .json({ status: 'err', content: 'oops, something went wrong' })
+    }
+  })
+  res.json({ status: 'ok', content: null })
+})
+
+app.get('/proofEmail', async (req, res) => {
+  const id = req.query.id
+
+  res.setHeader('Cache-control', `no-store`)
+
+  const [rows, _] = await dbPool.query(
+    `SELECT id, isActivated FROM users WHERE id = '${id}'`
+  )
+
+  if (!rows.length || rows[0].isActivated) {
+    return res.sendFile(path.resolve(__dirname, './static/errorReg.html'))
+  }
+
+  try {
+    await dbPool.query(`UPDATE users SET isActivated = 1 WHERE id = '${id}'`)
+    res.sendFile(path.resolve(__dirname, './static/successReg.html'))
+  } catch (err) {
+    res.status(501).send()
+  }
+})
+
+app.get('/getFileList', authCheck, async (req, res) => {
+  const token = req.cookies.token
+
+  const [rows, _] = await dbPool.query(
+    `SELECT id, name, comment, loadDate FROM files WHERE userId = (SELECT userId FROM sessions WHERE token = '${token}')`
+  )
+  res.setHeader('Cache-Control', 'public, max-age=0')
+  res.json(rows)
+})
+
+app.get('/download', authCheck, async (req, res) => {
+  const token = req.cookies.token
+
   const fileName = req.query.filename
+  {
+    const [rows, _] = await dbPool.query(
+      `SELECT name FROM files WHERE userId = (SELECT userId FROM sessions WHERE token = '${token}')`
+    )
+    console.log(rows)
+    if (!rows.find((row) => row.name === fileName)) {
+      return res.status(404).send()
+    }
+  }
   const filePath = path.resolve(__dirname, `../fileStorage/${fileName}`)
   res.download(filePath)
 })
 
-app.post('/upload', (req, res) => {
+app.post('/upload', authCheck, async (req, res) => {
+  const token = req.cookies.token
+  const [rows, _] = await dbPool.query(
+    `SELECT userId FROM sessions WHERE token = '${token}'`
+  )
+  const { userId } = rows.shift()
+
   const bb = busboy({ headers: req.headers })
   let comment
   let uploadId
@@ -105,18 +232,18 @@ app.post('/upload', (req, res) => {
     }
 
     const writerFinishHandler = async () => {
-      const id = nanoid()
-      const filebirth = (
-        await fs.promises.stat(filePath)
-      ).birthtime.toISOString()
-
-      fileIndex.set(id, createFileConfig(id, fileName, comment, filebirth))
-      fs.promises.writeFile(
-        path.resolve(__dirname, './filesConfig.json'),
-        JSON.stringify([...fileIndex.values()])
+      await dbPool.query(
+        `INSERT INTO files (userId, name, loadDate, comment) VALUES ('${userId}','${fileName}', NOW(),'${comment}')`
       )
+
       writerCleanUp()
-      res.status(200).json([...fileIndex.values()])
+
+      {
+        const [rows, _] = await dbPool.query(
+          `SELECT id, name, comment, loadDate FROM files WHERE userId = '${userId}'`
+        )
+        res.status(200).json(rows)
+      }
     }
 
     writer.on('error', writerErrorHandler)
@@ -150,66 +277,6 @@ app.post('/upload', (req, res) => {
   bb.on('finish', bbOnFinish)
 
   req.pipe(bb)
-})
-
-app.post('/reg', async (req, res) => {
-  const { email, password } = req.body
-
-  const [row, _] = await dbPool.query(
-    `SELECT id FROM users WHERE login = '${email}'`
-  )
-  if (row.length) {
-    res.json({ status: 'err', content: 'login already exist' })
-    return
-  }
-  const id = await bcrypt.hash(email, 10)
-
-  try {
-    await dbPool.query(
-      `INSERT INTO users VALUES ('${id}','${email}', '${password}', 0, NOW())`
-    )
-  } catch (err) {
-    res.json({ status: 'err', content: 'invalid registration' })
-  }
-
-  mailTransporter.sendMail(createLetter(email, id), (err, info) => {
-    if (err) {
-      res.json({ status: 'err', content: 'oops, something went wrong' })
-      return
-    }
-  })
-  res.json({ status: 'ok', content: null })
-})
-
-app.get('/proofEmail', async (req, res) => {
-  const id = req.query.id
-
-  res.setHeader('Cache-control', `no-store`)
-
-  const [row, _] = await dbPool.query(
-    `SELECT id, isProofEmail FROM users WHERE id = '${id}'`
-  )
-
-  if (!row.length || row[0].isProofEmail) {
-    res.sendFile(path.resolve(__dirname, './static/errorReg.html'))
-    return
-  }
-
-  try {
-    await dbPool.query(`UPDATE users SET isProofEmail = 1 WHERE id = '${id}'`)
-    res.sendFile(path.resolve(__dirname, './static/successReg.html'))
-  } catch (err) {
-    res.status(501).send()
-  }
-})
-
-app.post('/auth', async (req, res) => {
-  const { login, password } = req.body
-  // 1 путь 2) пришёл логин и пароль
-
-  /*
-  генерирую токен и отдаю
-   */
 })
 
 app.listen(EXPRESS_PORT, () => {

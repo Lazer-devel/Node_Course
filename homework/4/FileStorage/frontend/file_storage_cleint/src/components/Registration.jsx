@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { isValidPassword, isValidEmail, createHashPassword } from '../utils'
-import { entranceState } from '../constants'
+import { useNavigate } from 'react-router-dom'
+import LinkButton from './LinkButton'
 
-function Registration({ setEntranceState }) {
+function Registration() {
   const [password, setPassword] = useState('')
   const [provePassword, setProvePassword] = useState('')
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [isFirstStep, setFirstStep] = useState(true)
+  const navigate = useNavigate()
 
   const isValidateInput = () => {
     if (!isValidEmail(email)) {
@@ -40,7 +42,7 @@ function Registration({ setEntranceState }) {
     if (!isValidateInput()) {
       return
     }
-    const response = await fetch('http://localhost:10004/reg', {
+    const response = await fetch('/reg', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
@@ -83,10 +85,7 @@ function Registration({ setEntranceState }) {
       />
       <span className="reg__error">{error}</span>
       <div className="reg__control-wrapper reg__control-wrapper--spaces">
-        <button
-          className="reg__submit button"
-          onClick={() => setEntranceState(entranceState.auth)}
-        >
+        <button className="reg__submit button" onClick={() => navigate(-1)}>
           Назад
         </button>
         <button
@@ -108,12 +107,11 @@ function Registration({ setEntranceState }) {
         <>
           <h2 className="reg__header">{`Письмо было отправлено на ${email}`}</h2>
           <div className="reg__control-wrapper">
-            <button
-              className="reg__confirm button"
-              onClick={() => setEntranceState(entranceState.auth)}
-            >
-              Ок
-            </button>
+            <LinkButton
+              to={'/entry/auth'}
+              className={'reg__confirm'}
+              text={'OK'}
+            />
           </div>
         </>
       )}

@@ -4,7 +4,7 @@ function FileTable({ fileList, onLoadFailed }) {
   const header = {
     name: 'Название',
     comment: 'Комментарий',
-    date: 'Дата',
+    loadDate: 'Дата',
   }
 
   return (

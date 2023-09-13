@@ -40,6 +40,7 @@ function Upload({ exit, onLoadFailed, setFileList }) {
             const res = await fetch('/upload', {
               method: 'POST',
               body: formData,
+              credentials: 'include',
               signal: abortController.signal,
             })
             const fileList = await res.json()

@@ -1,17 +1,15 @@
 import downloadIcon from '../assets/download.svg'
 
 function FileItem({ file, onLoadFailed, isHeader = false }) {
-  const { name, date, comment } = file
+  const { name, loadDate, comment } = file
 
   const downloadFile = async () => {
     try {
-      const res = await fetch(
-        `http://localhost:10004/download?filename=${name}`,
-        {
-          method: 'GET',
-          cache: 'no-store',
-        }
-      )
+      const res = await fetch(`/download?filename=${name}`, {
+        method: 'GET',
+        cache: 'no-store',
+        credentials: 'include',
+      })
       if (res.status === 200) {
         const blob = await res.blob()
         const href = window.URL.createObjectURL(blob)
@@ -35,7 +33,7 @@ function FileItem({ file, onLoadFailed, isHeader = false }) {
     >
       <div className="file-table__item-name">{name}</div>
       <div className="file-table__item-comment">{comment}</div>
-      <div className="file-table__item-date">{date}</div>
+      <div className="file-table__item-date">{loadDate}</div>
       {!isHeader && (
         <div className="file-table__item-download-wrapper">
           <img
