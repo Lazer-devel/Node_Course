@@ -1,0 +1,138 @@
+@import '../../constants.scss';
+
+.content {
+  width: display flex;
+  width: 1240px;
+  margin: 0 auto;
+
+  &__layout {
+    width: 905px;
+  }
+}
+.general {
+  display: flex;
+
+  &__header {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    flex: 0 0 500px;
+    color: $--color-gray-600;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 34px;
+  }
+}
+
+.catalog {
+  &__list {
+    display: flex;
+  }
+
+  &__items {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+  }
+
+  &__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__amount {
+    padding-left: 8px;
+    color: $--color-gray-350;
+    font-size: 12px;
+    letter-spacing: 0.08px;
+  }
+}
+
+.filter {
+  &__title {
+    margin-top: 20px;
+    color: #181a1b;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 22px;
+  }
+
+  &__main-info {
+    display: flex;
+  }
+
+  &__params {
+    margin-top: 10px;
+    display: flex;
+  }
+
+  &__control {
+    display: flex;
+    justify-content: flex-end;
+    padding: 13px 20px 20px;
+    background-color: #f0f4f8;
+    border-top: 1px solid #e7edf3;
+    border-radius: 0 0 2px 2px;
+  }
+
+  &__show {
+    padding: 10px 20px 8px;
+    background-color: $--color-green-100;
+    box-shadow: 0 1px 0 #00a368;
+    box-shadow: 0 1px 0 $--color-green-110;
+    color: #fff;
+    border-radius: 4px;
+    box-sizing: border-box;
+    border: none;
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #00a368;
+      background-color: $--color-green-110;
+      box-shadow: 0 1px 0 #058f5d;
+      box-shadow: 0 1px 0 $--color-green-120;
+      color: #fff;
+    }
+  }
+
+  &__dropdown {
+    padding: 10px 10px 10px;
+    flex: 1 1 33.33%;
+    background: $--white;
+    border: 0;
+    text-align: left;
+    font-size: 15px;
+    font-family: inherit;
+    cursor: pointer;
+    font-weight: 600;
+
+    &:hover {
+      color: $--red;
+    }
+
+    &:not(:last-child) {
+      border-right: 2px inset $--body-bg;
+    }
+  }
+
+  &__dropdown-value {
+    position: relative;
+    &::after {
+      position: absolute;
+      display: block;
+      top: 50%;
+      left: 100%;
+      margin-left: 5px;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 4px 4px 0 4px;
+      border-color: #aeb3b8 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+      content: '';
+    }
+  }
+}

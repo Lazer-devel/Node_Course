@@ -1,0 +1,16 @@
+@import './constants.scss';
+
+a {
+  color: $--link-color;
+  text-decoration: none;
+
+  &:hover {
+    color: $--red;
+  }
+}
+
+ul {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
