@@ -21,7 +21,7 @@ const mailConf = JSON.parse(
 )
 
 const dbPool = mysql.createPool(sqlConf).promise()
-var mailTransporter = nodemailer.createTransport(mailConf)
+const mailTransporter = nodemailer.createTransport(mailConf)
 
 const app = express()
 
