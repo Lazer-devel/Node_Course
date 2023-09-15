@@ -5,3 +5,26 @@ export const sliceArr = (arr, size) => {
   }
   return slicedArr
 }
+
+export const createAgeArr = () => {
+  const curYear = new Date().getFullYear()
+  const startYear = 1910
+
+  const ageArr = []
+
+  for (let i = curYear; i >= startYear; i--) {
+    ageArr.push(i)
+  }
+  return ageArr
+}
+
+export const createVolumeArr = () => {
+  const volumeArr = []
+
+  for (let i = 1; i <= 9; i++) {
+    for (let j = 0; j <= 9; j++) {
+      volumeArr.push(`${i}.${j} л.`)
+    }
+  }
+  return volumeArr
+}

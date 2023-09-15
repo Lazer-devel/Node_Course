@@ -7,7 +7,7 @@ function Header() {
       return (
         <ul className="nav__dropdown-list">
           {children.map((child) => (
-            <li className="nav__dropdown-item">
+            <li key={child} className="nav__dropdown-item">
               <a className="nav__dropdown-link" href="/">
                 {child}
               </a>
@@ -19,7 +19,10 @@ function Header() {
     return headers.map((h) => {
       const hasChildren = !!h.children.length
       return (
-        <li className={`nav__item ${hasChildren ? 'nav__item-dropdown' : ''}`}>
+        <li
+          key={h.name}
+          className={`nav__item ${hasChildren ? 'nav__item-dropdown' : ''}`}
+        >
           <a className="nav__link" href="/notFound">
             <span className="nav__link-text">{h.name}</span>
           </a>

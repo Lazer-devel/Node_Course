@@ -33,7 +33,7 @@ function Content() {
           </h1>
         </div>
         <div className="catalog">{createCatalogList()}</div>
-        <Filter />
+        <Filter brands={cars.map((c) => c.brand)} />
       </div>
     </div>
   )
