@@ -1,11 +1,11 @@
-import Content from './components/mainPage/Content'
-import Header from './components/mainPage/Header'
+import Search from './components/search/Search'
+import LinkList from './components/general/LinkList'
+import MainPage from './components/mainPage/MainPage'
 
 function App() {
   return (
     <div className="app">
-      <Header />
-      <Content />
+      <Search />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-@import '../../constants.scss';
+@import '../../../constants.scss';
 
 .dropdown {
   width: 100%;
@@ -13,9 +13,15 @@
   cursor: pointer;
   font-weight: 600;
 
-  &:hover {
-    .filter__dropdown-title {
-      color: $--red;
+  &--disabled {
+    cursor: default;
+  }
+
+  &--active {
+    &:hover {
+      .dropdown__title {
+        color: $--red;
+      }
     }
   }
 
@@ -60,19 +66,30 @@
     }
   }
 
-  &__list {
+  &__content {
     position: absolute;
     top: 100%;
-    left: 0px;
-    width: 270px;
-    max-height: 310px;
+    overflow-y: auto;
     z-index: 1000;
     box-sizing: border-box;
     border-radius: 4px;
     box-shadow: 0 0 3px rgba(24, 26, 27, 0.1), 0 5px 5px rgba(0, 0, 0, 0.07),
       0 10px 5px rgba(0, 0, 0, 0.02);
     background-color: inherit;
-    overflow: auto;
+
+    &--list {
+      left: 0px;
+      width: 270px;
+      max-height: 310px;
+    }
+
+    &--table {
+      display: flex;
+      flex-wrap: wrap;
+      right: 0px;
+      min-width: 700px;
+      max-height: 544px;
+    }
 
     &--hidden {
       visibility: hidden;
@@ -84,10 +101,13 @@
   }
 
   &__item {
+    flex: 0 0 33.33333%;
+    box-sizing: border-box;
     padding: 10px 15px 9px 10px;
-    color: #000;
     font-size: 15px;
-    font-weight: 500;
+
+    line-height: 22px;
+    color: #181a1b;
     &:hover {
       color: $--red;
     }

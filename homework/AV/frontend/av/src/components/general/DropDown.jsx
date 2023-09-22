@@ -1,19 +1,33 @@
 import { useState } from 'react'
 
-import './dropdown.scss'
+import './styles/dropdown.scss'
 
-function DropDown({ initData }) {
-  const { defaultTitle, children, isSelected } = initData
-
-  const [title, setTitle] = useState(isSelected ? children[0] : null)
+function DropDown({
+  title,
+  defaultTitle,
+  children,
+  onSelect,
+  contentFormat = 'list',
+}) {
   const [isDropDownActive, setIsDropDownActive] = useState(false)
 
+  const contentWrapperClasses = `dropdown__content dropdown__content--${
+    contentFormat === 'list' ? contentFormat : 'table'
+  } ${
+    isDropDownActive
+      ? 'dropdown__content--visible'
+      : 'dropdown__content--hidden'
+  }`
   return (
     <button
-      className="dropdown"
+      className={`dropdown ${
+        children.length ? 'dropdown--active' : 'dropdown--disabled'
+      }`}
       onClick={() => {
         setIsDropDownActive((prev) => !prev)
       }}
+      disabled={!children.length}
+      onBlur={() => setIsDropDownActive(false)}
     >
       <span
         className={`dropdown__title ${title ? 'dropdown__title--offset' : ''}`}
@@ -28,20 +42,16 @@ function DropDown({ initData }) {
         </span>
       </span>
 
-      <ul
-        className={`dropdown__list ${
-          isDropDownActive
-            ? 'dropdown__list--visilbe'
-            : 'dropdown__list--hidden'
-        }`}
-      >
+      <ul className={contentWrapperClasses}>
         {children.map((child) => (
           <li
             key={child}
             className={`dropdown__item ${
               title === child ? 'dropdown__item--selected' : ''
             }`}
-            onClick={() => setTitle(child)}
+            onClick={(e) => {
+              onSelect(e.currentTarget.innerText)
+            }}
           >
             {child}
           </li>

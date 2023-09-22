@@ -1,0 +1,18 @@
+@import '../../constants.scss';
+
+.general {
+  display: flex;
+
+  &__header {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    flex: 0 0 500px;
+    color: $--color-gray-600;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 34px;
+  }
+}
+
+.mainPage__link-list {
+  max-height: 200px;
+}

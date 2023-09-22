@@ -1,7 +1,7 @@
-import './header.scss'
-import logo from '../../assets/av.svg'
+import './styles/header.scss'
+import logo from '../../../assets/av.svg'
 
-function Header() {
+function Header({ activeAuth }) {
   const createHeaders = () => {
     const createDropDownList = (children) => {
       return (
@@ -52,9 +52,9 @@ function Header() {
             </li>
           </ul>
           <ul className="nav__personal">
-            <a href="/notFound" className="nav__link">
+            <span href="/notFound" className="nav__link" onClick={activeAuth}>
               Войти
-            </a>
+            </span>
             <button className="nav__btn ">Подать объявление</button>
           </ul>
         </div>

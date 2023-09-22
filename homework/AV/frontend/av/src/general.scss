@@ -14,3 +14,42 @@ ul {
   margin: 0px;
   padding: 0px;
 }
+
+.title {
+  margin-top: 20px;
+  color: #181a1b;
+  font-family: 'Montserrat', system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 22px;
+}
+
+.label {
+  display: flex;
+  height: 19px;
+  margin-bottom: 5px;
+  color: #181a1b;
+  font-size: 13px;
+  line-height: 19px;
+  font-weight: 600;
+}
+
+.input {
+  box-sizing: border-box;
+  display: block;
+  padding: 9px 8px;
+  background-color: #fff;
+  background-image: none;
+  background-clip: padding-box;
+  border: none;
+  border-radius: 4px;
+  outline: none;
+  box-shadow: 0 0 0 1px var(--color-gray-300) inset,
+    0 2px 0 var(--color-gray-200) inset;
+  color: #000;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 20px;
+  -webkit-appearance: none;
+  appearance: none;
+}

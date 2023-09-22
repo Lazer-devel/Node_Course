@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import crossIcon from '../../assets/cross.svg'
 
-import './input.scss'
-function Input({ title }) {
-  const [value, setValue] = useState('')
+import crossIcon from '../../assets/cross.svg'
+import './styles/input.scss'
+
+function Input({ title, value, setValue }) {
   return (
     <div className="input">
       <input
@@ -13,7 +13,6 @@ function Input({ title }) {
         value={value}
         onChange={(e) => {
           const str = e.target.value
-          console.log(str)
           if (/^\d{0,6}$/.test(str)) {
             setValue(str)
           }

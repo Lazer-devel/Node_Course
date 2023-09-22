@@ -1,14 +1,7 @@
-@import '../../constants.scss';
-.filter {
-  &__title {
-    margin-top: 20px;
-    color: #181a1b;
-    font-family: 'Montserrat', system-ui, sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    line-height: 22px;
-  }
+@import '../../../constants.scss';
+@import '../../../general.scss';
 
+.filter {
   &__main-info {
     display: flex;
   }
@@ -41,12 +34,19 @@
     font-weight: 600;
     cursor: pointer;
 
-    &:hover {
+    &:not(.filter__show--disabled):hover {
       background-color: #00a368;
       background-color: $--color-green-110;
       box-shadow: 0 1px 0 #058f5d;
       box-shadow: 0 1px 0 $--color-green-120;
       color: #fff;
+    }
+
+    &--disabled {
+      background-color: $--color-gray-350;
+      box-shadow: none;
+      color: #fff;
+      cursor: not-allowed;
     }
   }
 
@@ -69,12 +69,6 @@
 
       &:last-child {
         flex: 1 1 auto;
-      }
-
-      &:hover {
-        .dropdown__title {
-          color: $--red;
-        }
       }
     }
   }

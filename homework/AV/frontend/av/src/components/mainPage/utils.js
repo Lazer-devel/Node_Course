@@ -1,11 +1,3 @@
-export const sliceArr = (arr, size) => {
-  let slicedArr = []
-  for (let i = 0; i < Math.ceil(arr.length / size); i++) {
-    slicedArr[i] = arr.slice(i * size, i * size + size)
-  }
-  return slicedArr
-}
-
 export const createAgeArr = () => {
   const curYear = new Date().getFullYear()
   const startYear = 1910
@@ -20,11 +12,19 @@ export const createAgeArr = () => {
 
 export const createVolumeArr = () => {
   const volumeArr = []
-
-  for (let i = 1; i <= 9; i++) {
-    for (let j = 0; j <= 9; j++) {
-      volumeArr.push(`${i}.${j} л.`)
-    }
+  for (let i = 11; i < 100; i++) {
+    volumeArr.push(i / 10)
   }
   return volumeArr
+}
+
+export const fetchData = async (url, options) => {
+  let response
+  try {
+    response = await fetch(`http://localhost:55555${url}`, options)
+  } catch (err) {
+    console.log(err.message)
+  }
+
+  return await response.json()
 }
