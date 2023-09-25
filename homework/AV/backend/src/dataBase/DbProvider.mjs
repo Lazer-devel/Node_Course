@@ -200,8 +200,9 @@ export default class DbProvider {
   }
 
   static async getAnnoumentsByModel(mark) {
-    const rows = await Mark.findAll({
+    const rows = await CarModel.findAll({
       attributes: [
+        'name',
         [
           this.#sequelize.fn('COUNT', this.#sequelize.col('id_announcement')),
           'amount',
@@ -209,28 +210,26 @@ export default class DbProvider {
       ],
       include: [
         {
-          model: CarModel,
+          model: Mark,
           required: true,
-          attributes: ['name'],
-          include: [
-            {
-              model: Announcement,
-              attributes: [],
-            },
-          ],
+          attributes: [],
+          where: {
+            name: mark,
+          },
+        },
+        {
+          model: Announcement,
+          attributes: [],
         },
       ],
-      where: {
-        name: mark,
-      },
-      group: ['CarModels.name', 'CarModels.id_car_model'],
+      group: ['name', 'id_car_model'],
     })
 
     return rows.map((r) => {
-      const { amount, CarModels } = r.toJSON()
+      const { name, amount } = r.toJSON()
       return {
         amount,
-        model: CarModels.name,
+        model: name,
       }
     })
   }

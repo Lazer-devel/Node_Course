@@ -120,6 +120,7 @@ app.get('/annoumentsCount', async (req, res) => {
 app.get('/modelAnnouments', async (req, res) => {
   const mark = req.query.mark
   const modelAnnouments = await DbProvider.getAnnoumentsByModel(mark)
+  console.log(modelAnnouments)
   res.json(modelAnnouments)
 })
 
