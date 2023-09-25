@@ -7,10 +7,11 @@ import Entry from '../Entry/Entry'
 
 function Layout({ children }) {
   const [isModalActive, setModalActive] = useState(false)
+  const [userName, setUserName] = useState(null)
   const modalRef = useRef(null)
   return (
     <>
-      <Header activeAuth={() => setModalActive(true)} />
+      <Header activeAuth={() => setModalActive(true)} userName={userName} />
       <Content>{children}</Content>
       <div
         className={`modal ${
@@ -26,6 +27,7 @@ function Layout({ children }) {
         <Entry
           isVisible={isModalActive}
           setHidden={() => setModalActive(false)}
+          setUserName={(userName) => setUserName(userName)}
         />
       </div>
     </>

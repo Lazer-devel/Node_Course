@@ -1,5 +1,7 @@
 import { DataTypes, Model } from 'sequelize'
 import CarModel from './CarModel.mjs'
+import { id_car_generation_fn, id_car_model_fn } from '../constant.mjs'
+import Announcement from './Announcement.mjs'
 
 export class Generation extends Model {
   static init(sequelize) {
@@ -35,6 +37,17 @@ export class Generation extends Model {
         timestamps: false,
       }
     )
+  }
+
+  static assosiate() {
+    Generation.belongsTo(CarModel, {
+      foreignKey: 'id_car_model',
+      targetKey: 'id_car_model',
+    })
+    Generation.hasMany(Announcement, {
+      foreignKey: 'id_car_generation',
+      sourceKey: 'id_car_generation',
+    })
   }
 }
 

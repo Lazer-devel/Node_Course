@@ -1,12 +1,38 @@
 import { useState } from 'react'
 
 import './styles/auth.scss'
+import { createHashPassword } from './utils'
 
-function AuthForm() {
-  const [mail, setMail] = useState('')
-  const [password, setPassword] = useState('')
-  const [err, setEtt] = useState(null)
+function AuthForm({ setHidden, setUserName }) {
+  const [login, setLogin] = useState('niklazq@mail.ru')
+  const [password, setPassword] = useState('5034630kK@')
+  const [error, setError] = useState(null)
 
+  const submit = async () => {
+    try {
+      const response = await fetch('http://localhost:55555/auth', {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          login,
+          password: await createHashPassword(password),
+        }),
+      })
+
+      const { status, content } = await response.json()
+
+      if (status === 'ok') {
+        setHidden()
+        return setUserName(login)
+      }
+      return setError(content)
+    } catch (err) {
+      return setError('Ошибка авторизации')
+    }
+  }
   return (
     <div className="auth">
       <div className="auth__content">
@@ -15,9 +41,9 @@ function AuthForm() {
           <input
             className="auth__email input"
             type="text"
-            value={mail}
+            value={login}
             onChange={(e) => {
-              setMail(e.target.value)
+              setLogin(e.target.value)
             }}
           />
         </div>
@@ -32,12 +58,13 @@ function AuthForm() {
             }}
           />
         </div>
+        <span className="reg__error">{error}</span>
       </div>
       <div className="auth__control">
         <button
           className="auth__submit"
-          disabled={!(password && mail)}
-          onClick={() => 2}
+          disabled={!(password && login)}
+          onClick={submit}
         >
           Войти
         </button>

@@ -1,4 +1,7 @@
 import { DataTypes, Model } from 'sequelize'
+import { id_car_mark_fn } from '../constant.mjs'
+import Announcement from './Announcement.mjs'
+import CarModel from './CarModel.mjs'
 
 class Mark extends Model {
   static init(sequelize) {
@@ -20,6 +23,18 @@ class Mark extends Model {
         timestamps: false,
       }
     )
+  }
+
+  static assosiate() {
+    Mark.hasMany(CarModel, {
+      foreignKey: 'id_car_mark',
+      sourceKey: 'id_car_mark',
+    })
+
+    Mark.hasMany(Announcement, {
+      foreignKey: 'id_car_mark',
+      sourceKey: 'id_car_mark',
+    })
   }
 }
 

@@ -95,6 +95,12 @@
     }
   }
 
+  &__username {
+    color: $--link-color;
+    font-weight: 600;
+    user-select: none;
+  }
+
   &__link {
     white-space: nowrap;
     color: $--link-color;

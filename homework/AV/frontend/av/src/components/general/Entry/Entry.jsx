@@ -5,8 +5,8 @@ import RegForm from './RegForm'
 import crissIcon from '../../../assets/cross.svg'
 import './styles/entry.scss'
 
-function Entry({ isVisible, setHidden }) {
-  const [isReg, setReg] = useState(true)
+function Entry({ isVisible, setHidden, setUserName }) {
+  const [isReg, setReg] = useState(false)
 
   return (
     <div className={`entry ${isVisible ? 'entry--visible' : 'entry--hidden'}`}>
@@ -18,7 +18,11 @@ function Entry({ isVisible, setHidden }) {
         <div className="entry__method">
           <span className="entry__mail-entry">по почте</span>
         </div>
-        {isReg ? <RegForm /> : <AuthForm />}
+        {isReg ? (
+          <RegForm />
+        ) : (
+          <AuthForm setHidden={setHidden} setUserName={setUserName} />
+        )}
         <div className="entry__toogle" onClick={() => setReg((prev) => !prev)}>
           {isReg ? 'Вход' : 'Регистрация'}
         </div>

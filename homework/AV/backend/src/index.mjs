@@ -1,14 +1,15 @@
 import express from 'express'
 import cors from 'cors'
-import bcrypt from 'bcrypt'
 import nodemailer from 'nodemailer'
 import cookieParser from 'cookie-parser'
 import fs from 'fs'
+import bcrypt from 'bcrypt'
 
 import { EXPRESS_PORT } from './constants.mjs'
 import DbProvider from './dataBase/dbProvider.mjs'
 import path from 'path'
 import { __dirname } from './constants.mjs'
+import { createLetter } from './utils.mjs'
 
 DbProvider.init()
 
@@ -19,35 +20,35 @@ const mailConf = JSON.parse(
 const mailTransporter = nodemailer.createTransport(mailConf)
 
 const app = express()
-app.use(cors())
+/****************************** */
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+)
+/****************************** */
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'static')))
 
 app.post('/reg', async (req, res) => {
-  const { email, password } = req.body
+  const { login, password } = req.body
 
-  const [rows, _] = await dbPool.query(
-    `SELECT id FROM users WHERE login = '${email}'`
-  )
-  if (rows.length) {
+  if (await DbProvider.isUserExist(login)) {
     return res.json({ status: 'err', content: 'login already exist' })
   }
-
-  const id = await bcrypt.hash(email, 10)
-
+  const id = await bcrypt.hash(login, 10)
   try {
-    await dbPool.query(
-      `INSERT INTO users VALUES ('${id}','${email}', '${password}', 0, NOW())`
-    )
-  } catch (err) {
+    await DbProvider.regUser(id, login, password)
+  } catch (_) {
     return res
       .status(501)
       .json({ status: 'err', content: 'invalid registration' })
   }
 
-  mailTransporter.sendMail(createLetter(email, id), (err, info) => {
+  mailTransporter.sendMail(createLetter(login, id), (err, info) => {
     if (err) {
       return res
         .status(501)
@@ -55,6 +56,55 @@ app.post('/reg', async (req, res) => {
     }
   })
   res.json({ status: 'ok', content: null })
+})
+
+app.get('/proofEmail', async (req, res) => {
+  const id = req.query.id
+
+  res.setHeader('Cache-control', `no-store`)
+
+  if (await DbProvider.isUserActivated(id)) {
+    return res.sendFile(path.resolve(__dirname, './static/errorReg.html'))
+  }
+
+  try {
+    await DbProvider.setUserActive(id)
+    res.sendFile(path.resolve(__dirname, './static/succedReg.html'))
+  } catch (err) {
+    res.status(501).send()
+  }
+})
+
+app.post('/auth', async (req, res) => {
+  const { login, password } = req.body
+
+  const user = await DbProvider.getUser(login, password)
+
+  if (!user) {
+    return res.json({ status: 'err', content: 'invalid login or password' })
+  }
+
+  if (!user.isActivated) {
+    return res.json({ status: 'err', content: 'login is inactive' })
+  }
+
+  try {
+    const token = await bcrypt.hash(login, 10)
+
+    await DbProvider.createSession(login, token)
+    res
+      .cookie('token', token, {
+        secure: false,
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 1000,
+        path: '/',
+        sameSite: 'strict',
+      })
+      .send({ status: 'ok' })
+  } catch (err) {
+    console.log(err.message)
+    res.status(501).json({ status: 'err', content: 'authorized error' })
+  }
 })
 
 app.get('/main', async (_, res) => {

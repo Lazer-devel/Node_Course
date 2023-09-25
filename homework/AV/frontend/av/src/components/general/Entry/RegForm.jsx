@@ -3,13 +3,14 @@ import { useState } from 'react'
 import './styles/reg.scss'
 import { createHashPassword, isValidEmail, isValidPassword } from './utils'
 function Reg() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [provedPassword, setprovedPassword] = useState('')
+  const [login, setLogin] = useState('niklazq@mail.ru')
+  const [password, setPassword] = useState('5034630kK@')
+  const [provedPassword, setprovedPassword] = useState('5034630kK@')
   const [error, setError] = useState(null)
+  const [isRegSucced, setIsRegSucced] = useState(false)
 
   const isValidateInput = () => {
-    if (!isValidEmail(email)) {
+    if (!isValidEmail(login)) {
       setError('Неверно указана почта ')
       return false
     }
@@ -28,30 +29,40 @@ function Reg() {
     return true
   }
 
-  const regHandle = async () => {
+  const submit = async () => {
     if (!isValidateInput()) {
       return
     }
     try {
-      const response = await fetch('/reg', {
+      const response = await fetch('http://localhost:55555/reg', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
-          email,
+          login,
           password: await createHashPassword(password),
         }),
       })
-      if (response.status !== 200) {
-        setError('Произошла ошбика.. повторите попытку позже')
+      const { status, content } = await response.json()
+
+      if (status === 'ok') {
+        return setIsRegSucced(true)
       }
+      return setError(content)
     } catch (err) {
-      setError('Произошла ошбика.. повторите попытку позже')
+      return setError('Произошла ошибка.. повторите попытку позже')
     }
   }
 
-  return (
+  return isRegSucced ? (
+    <div className="reg">
+      <div className="reg__content">
+        <span className="reg__info">{`Мы отправили ссылку активации на ${login}`}</span>
+      </div>
+    </div>
+  ) : (
     <div className="reg">
       <div className="reg__content">
         <div className="reg__email-wrapper">
@@ -59,9 +70,9 @@ function Reg() {
           <input
             className="reg__email input"
             type="text"
-            value={email}
+            value={login}
             onChange={(e) => {
-              setEmail(e.target.value)
+              setLogin(e.target.value)
             }}
           />
         </div>
@@ -90,16 +101,12 @@ function Reg() {
           />
         </div>
         <span className="reg__error">{error}</span>
-        <span className="reg__info">
-          Мы отправим письмо на указанную почту со ссылкой на страницу
-          активации.
-        </span>
       </div>
       <div className="reg__control">
         <button
           className="reg__submit"
-          disabled={!(email && password && provedPassword)}
-          onClick={regHandle}
+          disabled={!(login && password && provedPassword)}
+          onClick={submit}
         >
           Зарегистрироваться
         </button>

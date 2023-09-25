@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import Layout from '../general/Layout/Layout'
 import Filter from '../general/Filter'
 import LinkList, { createInitData } from '../general/LinkList'
-import { fetchData, sliceArr } from './utils'
+import { fetchData } from './utils'
 
 import './styles.scss'
 
@@ -18,6 +18,7 @@ function MainPage() {
       const annouments = await fetchData('/main', {
         cache: 'no-store',
         signal: controller.signal,
+        credentials: 'include',
       })
       console.log(annouments)
       setCurAnnouments(annouments)
@@ -27,6 +28,7 @@ function MainPage() {
       const annoumentCount = await fetchData('/annoumentsCount', {
         cache: 'no-store',
         signal: controller.signal,
+        credentials: 'include',
       })
       setAnnoumentCount(annoumentCount)
     }

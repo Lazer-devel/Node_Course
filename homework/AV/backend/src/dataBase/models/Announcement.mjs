@@ -1,4 +1,12 @@
 import { DataTypes, Model } from 'sequelize'
+import {
+  id_car_generation_fn,
+  id_car_mark_fn,
+  id_car_model_fn,
+} from '../constant.mjs'
+import Generation from './Generation.mjs'
+import CarModel from './CarModel.mjs'
+import Mark from './Mark.mjs'
 
 export class Announcement extends Model {
   static init(sequelize) {
@@ -52,6 +60,21 @@ export class Announcement extends Model {
         timestamps: false,
       }
     )
+  }
+
+  static assosiate() {
+    Announcement.belongsTo(Mark, {
+      foreignKey: 'id_car_mark',
+      targetKey: 'id_car_mark',
+    })
+    Announcement.belongsTo(CarModel, {
+      foreignKey: 'id_car_model',
+      targetKey: 'id_car_model',
+    })
+    Announcement.belongsTo(Generation, {
+      foreignKey: 'id_car_generation',
+      targetKey: 'id_car_generation',
+    })
   }
 }
 

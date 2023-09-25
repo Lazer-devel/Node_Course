@@ -7,6 +7,8 @@ import Mark from './models/Mark.mjs'
 import CarModel from './models/CarModel.mjs'
 import Generation from './models/Generation.mjs'
 import Announcement from './models/Announcement.mjs'
+import User from './models/User.mjs'
+import Session from './models/Session.mjs'
 
 export default class DbProvider {
   static #sequelize
@@ -17,87 +19,11 @@ export default class DbProvider {
     )
     this.#sequelize = new Sequelize(dataBase, user, password, options)
 
-    Mark.init(this.#sequelize)
-    CarModel.init(this.#sequelize)
-    Generation.init(this.#sequelize)
-    Announcement.init(this.#sequelize)
-
-    /* MARK AND CARMODEL */
-    const mark_carModel_fn = {
-      allowNull: false,
-      defaultValue: 0,
-      field: 'id_car_mark',
-    }
-
-    Mark.hasOne(CarModel, {
-      foreignKey: mark_carModel_fn,
-    })
-
-    CarModel.belongsTo(Mark, {
-      foreignKey: mark_carModel_fn,
-    })
-
-    /* CARMODEL AND GENERATION */
-    const carModel_generation_fn = {
-      allowNull: false,
-      defaultValue: 0,
-      field: 'id_car_model',
-    }
-
-    CarModel.hasOne(Generation, {
-      foreignKey: carModel_generation_fn,
-    })
-
-    Generation.belongsTo(CarModel, {
-      foreignKey: carModel_generation_fn,
-    })
-
-    /* ANNOUMENT AND MARK */
-    const annoument_mark_fn = {
-      allowNull: false,
-      defaultValue: 0,
-      field: 'id_car_mark',
-    }
-
-    Mark.hasOne(Announcement, {
-      foreignKey: annoument_mark_fn,
-    })
-
-    Announcement.belongsTo(Mark, {
-      foreignKey: annoument_mark_fn,
-    })
-
-    /* ANNOUMENT AND CarModel */
-    const annoument_carModel_fn = {
-      allowNull: false,
-      defaultValue: 0,
-      field: 'id_car_model',
-    }
-
-    CarModel.hasOne(Announcement, {
-      foreignKey: annoument_carModel_fn,
-    })
-
-    Announcement.belongsTo(CarModel, {
-      foreignKey: annoument_carModel_fn,
-    })
-
-    /* ANNOUMENT AND Generation */
-    const annoument_generation_fn = {
-      allowNull: false,
-      defaultValue: 0,
-      field: 'id_car_generation',
-    }
-
-    Generation.hasOne(Announcement, {
-      foreignKey: annoument_generation_fn,
-    })
-
-    Announcement.belongsTo(Generation, {
-      foreignKey: annoument_generation_fn,
-    })
+    const models = [Mark, CarModel, Generation, Announcement, User, Session]
+    models
+      .map((model) => model.init(this.#sequelize))
+      .forEach((model) => model.assosiate())
   }
-
   static async getAnnoumentsByMark() {
     const rows = await Mark.findAll({
       attributes: [
@@ -106,7 +32,7 @@ export default class DbProvider {
         [
           this.#sequelize.fn(
             'COUNT',
-            this.#sequelize.col('Announcement.id_announcement')
+            this.#sequelize.col('Announcements.id_announcement')
           ),
           'amount',
         ],
@@ -297,15 +223,77 @@ export default class DbProvider {
       where: {
         name: mark,
       },
-      group: ['CarModel.name', 'CarModel.id_car_model'],
+      group: ['CarModels.name', 'CarModels.id_car_model'],
     })
 
     return rows.map((r) => {
-      const { amount, CarModel } = r.toJSON()
+      const { amount, CarModels } = r.toJSON()
       return {
         amount,
-        model: CarModel.name,
+        model: CarModels.name,
       }
+    })
+  }
+
+  static async isUserExist(login) {
+    const isUserExist = await User.count({
+      attributes: [],
+      where: {
+        login,
+      },
+    })
+    return !!isUserExist
+  }
+
+  static async regUser(id, login, password) {
+    await User.create({
+      id,
+      login,
+      password,
+      isActivated: 0,
+      regDate: Sequelize.fn('NOW'),
+    })
+  }
+
+  static async isUserActivated(id) {
+    const user = await User.findOne({
+      attributes: ['isActivated'],
+      where: {
+        id,
+      },
+    })
+    console.log(user.isActivated)
+    return !!user.isActivated
+  }
+
+  static async setUserActive(id) {
+    await User.update(
+      {
+        isActivated: 1,
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    )
+  }
+
+  static async getUser(login, password) {
+    const user = await User.findOne({
+      attributes: ['login', 'password', 'isActivated'],
+      where: { login, password },
+    })
+    return user && user.toJSON()
+  }
+
+  static async createSession(login, token) {
+    console.log(`----${login}----`)
+
+    await Session.create({
+      token,
+      login,
+      lastAccess: Sequelize.fn('NOW'),
     })
   }
 }

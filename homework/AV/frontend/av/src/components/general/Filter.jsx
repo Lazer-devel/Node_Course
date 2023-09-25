@@ -24,6 +24,7 @@ function Filter({ selectedMark = null }) {
     const getMarks = async () => {
       const marks = await fetchData('/marks', {
         cache: 'no-store',
+        credentials: 'include',
       })
       setMarkList(marks)
     }
@@ -50,6 +51,7 @@ function Filter({ selectedMark = null }) {
 
       const amount = await fetchData(`/annoumentsCount?${urlParams}`, {
         cache: 'no-store',
+        credentials: 'include',
         signal: controller.signal,
       })
       setAmount(amount)

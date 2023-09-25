@@ -16,9 +16,13 @@
 
   &--visible {
     transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
   }
 
   &--hidden {
+    visibility: hidden;
+    opacity: 0;
     transform: translateX(100%);
   }
 
