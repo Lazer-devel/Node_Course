@@ -10,7 +10,6 @@ function DropDown({
   contentFormat = 'list',
 }) {
   const [isDropDownActive, setIsDropDownActive] = useState(false)
-
   const contentWrapperClasses = `dropdown__content dropdown__content--${
     contentFormat === 'list' ? contentFormat : 'table'
   } ${
@@ -43,9 +42,9 @@ function DropDown({
       </span>
 
       <ul className={contentWrapperClasses}>
-        {children.map((child) => (
+        {children.map((child, i) => (
           <li
-            key={child}
+            key={i}
             className={`dropdown__item ${
               title === child ? 'dropdown__item--selected' : ''
             }`}

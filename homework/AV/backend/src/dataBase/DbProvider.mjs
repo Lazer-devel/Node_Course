@@ -15,7 +15,7 @@ export default class DbProvider {
 
   static init() {
     const { dataBase, user, password, options } = JSON.parse(
-      fs.readFileSync(path.resolve(__dirname, '../dbConf.json'))
+      fs.readFileSync(path.join(__dirname, '/dataBase/dbConf.json'))
     )
     this.#sequelize = new Sequelize(dataBase, user, password, options)
 
@@ -52,89 +52,10 @@ export default class DbProvider {
     })
   }
 
-  static async getAnnoumentsCount({
-    mark,
-    model,
-    generation,
-    beginYear,
-    endYear,
-    beginVolume,
-    endVolume,
-    beginCost,
-    endCost,
-  }) {
-    const include = []
-    const where = {}
-    const year = {}
-    const cost = {}
-    const volume = {}
-
-    mark &&
-      include.push({
-        model: Mark,
-        required: true,
-        attributes: ['name'],
-        where: { name: mark },
-      })
-
-    model &&
-      include.push({
-        model: CarModel,
-        required: true,
-        attributes: [],
-        where: { name: model },
-      })
-
-    generation &&
-      include.push({
-        model: Generation,
-        required: true,
-        attributes: [],
-        where: { name: generation },
-      })
-
-    if (beginYear) {
-      year[Op.gte] = beginYear
-      where.year = year
-    }
-
-    if (endYear) {
-      year[Op.lte] = endYear
-      where.year = year
-    }
-
-    if (beginVolume) {
-      volume[Op.gte] = beginVolume
-      where.volume = volume
-    }
-
-    if (endVolume) {
-      volume[Op.lte] = endVolume
-      where.volume = volume
-    }
-
-    if (beginCost) {
-      cost[Op.gte] = beginCost
-      where.cost = cost
-    }
-
-    if (endCost) {
-      cost[Op.lte] = endCost
-      where.cost = cost
-    }
-
-    const amount = await Announcement.count({
-      include,
-      where,
-    })
-    return amount
-  }
-
   static async getMarks() {
     const rows = await Mark.findAll({
       attributes: ['name'],
     })
-    console.log(rows)
     return rows.map((r) => r.name)
   }
 
@@ -261,7 +182,6 @@ export default class DbProvider {
         id,
       },
     })
-    console.log(user.isActivated)
     return !!user.isActivated
   }
 
@@ -287,12 +207,122 @@ export default class DbProvider {
   }
 
   static async createSession(login, token) {
-    console.log(`----${login}----`)
-
     await Session.create({
       token,
       login,
       lastAccess: Sequelize.fn('NOW'),
+    })
+  }
+
+  static async getAds({
+    mark,
+    model,
+    generation,
+    id,
+    beginYear,
+    endYear,
+    beginVolume,
+    endVolume,
+    beginCost,
+    endCost,
+  }) {
+    const where = {}
+    const markWhere = {}
+    const modelWhere = {}
+    const generationWhere = {}
+    const year = {}
+    const cost = {}
+    const volume = {}
+
+    if (mark) {
+      markWhere.name = mark
+    }
+
+    if (model) {
+      modelWhere.name = model
+    }
+
+    if (generation) {
+      generationWhere.name = generation
+    }
+
+    if (beginYear) {
+      year[Op.gte] = beginYear
+      where.year = year
+    }
+
+    if (endYear) {
+      year[Op.lte] = endYear
+      where.year = year
+    }
+
+    if (beginVolume) {
+      volume[Op.gte] = beginVolume
+      where.volume = volume
+    }
+
+    if (endVolume) {
+      volume[Op.lte] = endVolume
+      where.volume = volume
+    }
+
+    if (beginCost) {
+      cost[Op.gte] = beginCost
+      where.cost = cost
+    }
+
+    if (endCost) {
+      cost[Op.lte] = endCost
+      where.cost = cost
+    }
+
+    if (id) {
+      where.id_announcement = id
+    }
+
+    return await Announcement.findAll({
+      raw: true,
+      attributes: [
+        ['id_announcement', 'id'],
+        'cost',
+        'year',
+        'comment',
+        'volume',
+        'city',
+        'mileage',
+        'fuel',
+        'transmission',
+        'body',
+        'date',
+        'photo_amount',
+        ['id_car_mark', 'markId'],
+        ['id_car_model', 'modelId'],
+        ['id_car_generation', 'generationId'],
+        [this.#sequelize.col('Mark.name'), 'mark'],
+        [this.#sequelize.col('CarModel.name'), 'model'],
+        [this.#sequelize.col('Generation.name'), 'generation'],
+      ],
+      where,
+      include: [
+        {
+          model: Mark,
+          required: true,
+          attributes: [],
+          where: markWhere,
+        },
+        {
+          model: CarModel,
+          required: true,
+          attributes: [],
+          where: modelWhere,
+        },
+        {
+          model: Generation,
+          required: true,
+          attributes: [],
+          where: generationWhere,
+        },
+      ],
     })
   }
 }

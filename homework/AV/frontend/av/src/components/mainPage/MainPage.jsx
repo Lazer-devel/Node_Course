@@ -49,6 +49,7 @@ function MainPage() {
         </h1>
       </div>
       <LinkList
+        commonUrl={'/catalog/'}
         links={curAnnouments.map(({ mark, amount }) =>
           createInitData(mark, amount, !amount)
         )}

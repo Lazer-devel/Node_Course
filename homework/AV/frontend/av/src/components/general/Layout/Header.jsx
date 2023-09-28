@@ -1,5 +1,6 @@
 import './styles/header.scss'
 import logo from '../../../assets/av.svg'
+import { NavLink } from 'react-router-dom'
 
 function Header({ activeAuth, userName }) {
   const createHeaders = () => {
@@ -36,11 +37,13 @@ function Header({ activeAuth, userName }) {
     <div className="header">
       <div className="header__container">
         <div className="header__logo-wrap">
-          <img
-            style={{ width: '82px', height: '50px' }}
-            src={logo}
-            alt="logo"
-          />
+          <NavLink to={'/'}>
+            <img
+              style={{ width: '82px', height: '50px' }}
+              src={logo}
+              alt="logo"
+            />
+          </NavLink>
         </div>
         <div className="nav">
           <ul className="nav__main">

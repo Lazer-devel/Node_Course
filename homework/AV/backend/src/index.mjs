@@ -102,25 +102,21 @@ app.post('/auth', async (req, res) => {
       })
       .send({ status: 'ok' })
   } catch (err) {
-    console.log(err.message)
     res.status(501).json({ status: 'err', content: 'authorized error' })
   }
 })
 
 app.get('/main', async (_, res) => {
-  const data = await DbProvider.getAnnoumentsByMark()
-  res.json(data)
+  res.json(await DbProvider.getAnnoumentsByMark())
 })
 
 app.get('/annoumentsCount', async (req, res) => {
-  const count = await DbProvider.getAnnoumentsCount(req.query)
-  res.json(count)
+  res.json((await DbProvider.getAds(req.query)).length)
 })
 
 app.get('/modelAnnouments', async (req, res) => {
   const mark = req.query.mark
   const modelAnnouments = await DbProvider.getAnnoumentsByModel(mark)
-  console.log(modelAnnouments)
   res.json(modelAnnouments)
 })
 
@@ -137,10 +133,25 @@ app.get('/models', async (req, res) => {
 app.get('/generations', async (req, res) => {
   const mark = req.query.mark
   const model = req.query.model
-
   const generations = await DbProvider.getGenerations(mark, model)
-  console.log(generations)
   res.json(generations)
+})
+
+app.get('/catalog', async (req, res) => {
+  res.json(await DbProvider.getAds(req.params))
+})
+app.get('/catalog/:mark', async (req, res) => {
+  res.json(await DbProvider.getAds(req.params))
+})
+app.get('/catalog/:mark/:model', async (req, res) => {
+  res.json(await DbProvider.getAds(req.params))
+})
+app.get('/catalog/:mark/:model/:id', async (req, res) => {
+  res.json((await DbProvider.getAds(req.params)).pop())
+})
+
+app.get('/filter', async (req, res) => {
+  res.json(await DbProvider.getAds(req.query))
 })
 
 app.listen(EXPRESS_PORT, () => console.log('express started'))

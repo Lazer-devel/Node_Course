@@ -1,55 +1,100 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import {
+  NavLink,
+  useLocation,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom'
 
 import { createAgeArr, createVolumeArr, fetchData } from '../mainPage/utils'
 import './styles/filter.scss'
 import DropDown from './DropDown'
 import Input from './Input'
 
-function Filter({ selectedMark = null }) {
-  const [mark, setMark] = useState(selectedMark)
-  const [model, setModel] = useState(null)
-  const [generation, setGeneration] = useState(null)
-  const [beginYear, setBeginYear] = useState(null)
-  const [endYear, setEndYear] = useState(null)
-  const [beginCost, setBeginCost] = useState('')
-  const [endCost, setEndCost] = useState('')
-  const [beginVolume, setBeginVolume] = useState(null)
-  const [endVolume, setEndVolume] = useState(null)
+function Filter() {
+  const [searchParams] = useSearchParams()
+  const [mark, setMark] = useState(searchParams.get('mark'))
+  const [model, setModel] = useState(searchParams.get('model'))
+  const [generation, setGeneration] = useState(searchParams.get('generation'))
+  const [beginYear, setBeginYear] = useState(searchParams.get('beginYear'))
+  const [endYear, setEndYear] = useState(searchParams.get('endYear'))
+  const [beginCost, setBeginCost] = useState(searchParams.get('endYear') ?? '')
+  const [endCost, setEndCost] = useState(searchParams.get('endYear') ?? '')
+  const [beginVolume, setBeginVolume] = useState(
+    searchParams.get('beginVolume')
+  )
+  const [endVolume, setEndVolume] = useState(searchParams.get('endVolume'))
   const [amount, setAmount] = useState(null)
   const [markList, setMarkList] = useState([])
   const [modelList, setModelList] = useState([])
   const [generationList, setGenerationList] = useState([])
 
+  {
+    const location = useLocation()
+    const { mark, model } = useParams()
+    useEffect(() => {
+      if (location.pathname === '/filter') {
+        return
+      }
+      setMark(mark)
+      setModel(model)
+    }, [mark, model, location])
+  }
+
   useEffect(() => {
-    const getMarks = async () => {
+    const getInitData = async () => {
       const marks = await fetchData('/marks', {
         cache: 'no-store',
         credentials: 'include',
       })
       setMarkList(marks)
-    }
-    getMarks()
-  }, [])
 
+      if (mark) {
+        const models = await fetchData(`/models?mark=${mark}`)
+        setModelList(models)
+      }
+
+      if (model) {
+        const generations = await fetchData(
+          `/generations?mark=${mark}&model=${model}`
+        )
+        setGenerationList(generations)
+      }
+    }
+    getInitData()
+  }, [mark, model])
+
+  const createUrlParams = useCallback(() => {
+    const urlParams = new URLSearchParams()
+    mark && urlParams.append('mark', mark)
+    model && urlParams.append('model', model)
+    generation && urlParams.append('generation', generation)
+    beginYear && urlParams.append('beginYear', beginYear)
+    endYear && urlParams.append('endYear', endYear)
+    beginCost && urlParams.append('beginCost', beginCost)
+    endCost && urlParams.append('endCost', endCost)
+    beginVolume && urlParams.append('beginVolume', beginVolume)
+    endVolume && urlParams.append('endVolume', endVolume)
+
+    return `${urlParams.size ? `?${urlParams.toString()}` : ''}`
+  }, [
+    beginCost,
+    beginVolume,
+    beginYear,
+    endCost,
+    endVolume,
+    endYear,
+    generation,
+    mark,
+    model,
+  ])
   useEffect(() => {
     if (!markList) {
       return
     }
-
     const controller = new AbortController()
     const getAnnoumentCount = async () => {
-      const urlParams = new URLSearchParams()
-      mark && urlParams.append('mark', mark)
-      model && urlParams.append('model', model)
-      generation && urlParams.append('generation', generation)
-      beginYear && urlParams.append('beginYear', beginYear)
-      endYear && urlParams.append('endYear', endYear)
-      beginCost && urlParams.append('beginCost', beginCost)
-      endCost && urlParams.append('endCost', endCost)
-      beginVolume && urlParams.append('beginVolume', beginVolume)
-      endVolume && urlParams.append('endVolume', endVolume)
-
-      const amount = await fetchData(`/annoumentsCount?${urlParams}`, {
+      const amount = await fetchData(`/annoumentsCount${createUrlParams()}`, {
         cache: 'no-store',
         credentials: 'include',
         signal: controller.signal,
@@ -62,18 +107,7 @@ function Filter({ selectedMark = null }) {
     return () => {
       //controller.abort()
     }
-  }, [
-    mark,
-    model,
-    generation,
-    beginYear,
-    endYear,
-    beginCost,
-    endCost,
-    beginVolume,
-    endVolume,
-    markList,
-  ])
+  }, [createUrlParams, markList])
 
   const markSelected = async (value) => {
     setMark(value)
@@ -81,18 +115,12 @@ function Filter({ selectedMark = null }) {
     setGeneration(null)
     setModelList([])
     setGenerationList([])
-    const models = await fetchData(`/models?mark=${value}`)
-    setModelList(models)
   }
 
   const modelSelected = async (value) => {
     setModel(value)
     setGenerationList([])
     setGeneration(null)
-    const generations = await fetchData(
-      `/generations?mark=${mark}&model=${value}`
-    )
-    setGenerationList(generations)
   }
 
   const createGenerationChildren = () => {
@@ -100,6 +128,7 @@ function Filter({ selectedMark = null }) {
       return (
         <>
           <img
+            key={id}
             src={`http://localhost:55555/generations/${id}.jpeg`}
             alt={name}
             width="200px"
@@ -112,140 +141,143 @@ function Filter({ selectedMark = null }) {
     })
   }
 
+  const mainSubFilterChildren = [
+    [
+      <DropDown
+        title={mark}
+        defaultTitle="Марка"
+        children={markList}
+        onSelect={markSelected}
+      />,
+    ],
+    [
+      <DropDown
+        title={model}
+        defaultTitle="Модель"
+        children={modelList}
+        onSelect={modelSelected}
+      />,
+    ],
+    [
+      <DropDown
+        title={generation}
+        defaultTitle="Поколение"
+        children={createGenerationChildren()}
+        onSelect={(value) => {
+          console.log(value)
+          //value: 'generation, beginYear...endYear'
+          //FIXME
+          setGeneration(value.split(',')[0])
+        }}
+        contentFormat="table"
+      />,
+    ],
+  ]
+
+  const secondarySubFilterChildren = [
+    [
+      <DropDown
+        title={beginYear}
+        defaultTitle="Год от"
+        children={createAgeArr()}
+        onSelect={(value) => {
+          setBeginYear(value)
+        }}
+      />,
+      <DropDown
+        title={endYear}
+        defaultTitle="до"
+        children={createAgeArr()}
+        onSelect={(value) => {
+          setEndYear(value)
+        }}
+      />,
+    ],
+    [
+      <Input
+        title={'Цена от'}
+        value={beginCost}
+        setValue={(value) => setBeginCost(value)}
+      />,
+      <Input
+        title={'до'}
+        value={endCost}
+        setValue={(value) => setEndCost(value)}
+      />,
+      <DropDown
+        title={'USD'}
+        defaultTitle="Валюта"
+        children={[]}
+        onSelect={() => {}}
+      />,
+    ],
+    [
+      <DropDown
+        title={beginVolume && `${beginVolume} л.`}
+        defaultTitle="Объём от"
+        children={createVolumeArr()}
+        onSelect={(value) => {
+          setBeginVolume(value)
+        }}
+      />,
+      <DropDown
+        title={endVolume}
+        defaultTitle="До"
+        children={createVolumeArr()}
+        onSelect={(value) => {
+          setEndVolume(value)
+        }}
+      />,
+    ],
+  ]
+
+  const createFilterControls = (children) => {
+    return children.map((child, index) => (
+      <div key={index} className="filter__field-control">
+        {child}
+      </div>
+    ))
+  }
+
   return (
     <div className="filter">
       <h2 className="filter__title title"> Поиск по параметрам</h2>
       <div className="filter__main-info">
-        <div className="filter__field">
-          <div className="filter__field-controls">
-            <div className="filter__field-control">
-              <DropDown
-                title={mark}
-                defaultTitle="Марка"
-                children={markList}
-                onSelect={markSelected}
-              />
+        {mainSubFilterChildren.map((child, i) => {
+          return (
+            <div className="filter__field" key={i}>
+              <div className="filter__field-controls">
+                {createFilterControls(child)}
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="filter__field">
-          <div className="filter__field-controls">
-            <div className="filter__field-control">
-              <DropDown
-                title={model}
-                defaultTitle="Модель"
-                children={modelList}
-                onSelect={modelSelected}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="filter__field">
-          <div className="filter__field-controls">
-            <div className="filter__field-control">
-              <DropDown
-                title={generation}
-                defaultTitle="Поколение"
-                children={createGenerationChildren()}
-                onSelect={(value) => {
-                  console.log(value)
-                  //value: 'generation, beginYear...endYear'
-                  //FIXME
-                  setGeneration(value.split(',')[0])
-                }}
-                contentFormat="table"
-              />
-            </div>
-          </div>
-        </div>
+          )
+        })}
       </div>
-
       <div className="filter__secondary">
-        <div className="filter__field">
-          <div className="filter__field-controls">
-            <div className="filter__field-control">
-              <DropDown
-                title={beginYear}
-                defaultTitle="Год от"
-                children={createAgeArr()}
-                onSelect={(value) => {
-                  setBeginYear(value)
-                }}
-              />
+        {secondarySubFilterChildren.map((child, i) => {
+          return (
+            <div className="filter__field" key={i}>
+              <div className="filter__field-controls">
+                {createFilterControls(child)}
+              </div>
             </div>
-            <div className="filter__field-control">
-              <DropDown
-                title={endYear}
-                defaultTitle="до"
-                children={createAgeArr()}
-                onSelect={(value) => {
-                  setEndYear(value)
-                }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="filter__field">
-          <div className="filter__field-controls">
-            <div className="filter__field-control">
-              <Input
-                title={'Цена от'}
-                value={beginCost}
-                setValue={(value) => setBeginCost(value)}
-              />
-            </div>
-            <div className="filter__field-control">
-              <Input
-                title={'до'}
-                value={endCost}
-                setValue={(value) => setEndCost(value)}
-              />
-            </div>
-            <div className="filter__field-control">
-              <DropDown
-                title={'USD'}
-                defaultTitle="Валюта"
-                children={[]}
-                onSelect={() => {}}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="filter__field">
-          <div className="filter__field-controls">
-            <div className="filter__field-control">
-              <DropDown
-                title={beginVolume && `${beginVolume} л.`}
-                defaultTitle="Объём от"
-                children={createVolumeArr()}
-                onSelect={(value) => {
-                  setBeginVolume(value)
-                }}
-              />
-            </div>
-            <div className="filter__field-control">
-              <DropDown
-                title={endVolume}
-                defaultTitle="До"
-                children={createVolumeArr()}
-                onSelect={(value) => {
-                  setEndVolume(value)
-                }}
-              />
-            </div>
-          </div>
-        </div>
+          )
+        })}
       </div>
       <div className="filter__control">
-        <button
+        <NavLink
           className={`filter__show ${amount ? '' : 'filter__show--disabled'}`}
-          disabled={!amount}
+          to={`/filter${createUrlParams()}`}
+          onClick={(e) => {
+            if (!amount) {
+              e.preventDefault()
+            }
+          }}
         >
           {amount ? `Показать ${amount} объявления` : 'Ничего не найдено'}
-        </button>
+        </NavLink>
       </div>
     </div>
   )
 }
-
 export default Filter
