@@ -2,11 +2,13 @@ import { useState } from 'react'
 
 import './styles/auth.scss'
 import { createHashPassword } from './utils'
+import { useAuth } from '../../../../hook/useAuth'
 
 function AuthForm({ setHidden, setUserName }) {
   const [login, setLogin] = useState('niklazq@mail.ru')
   const [password, setPassword] = useState('5034630kK@')
   const [error, setError] = useState(null)
+  const { signIn } = useAuth()
 
   const submit = async () => {
     try {
@@ -26,6 +28,7 @@ function AuthForm({ setHidden, setUserName }) {
 
       if (status === 'ok') {
         setHidden()
+        signIn()
         return setUserName(login)
       }
       return setError(content)

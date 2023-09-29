@@ -42,7 +42,7 @@ function Search() {
   }, [location.pathname, mark, model, searchParams])
 
   return (
-    <Layout>
+    <>
       <div className="general">
         <h1 className="general__header">
           Продажа автомобилей {mark} в&nbsp;Беларуси
@@ -65,7 +65,7 @@ function Search() {
           ))}
         </ul>
       </div>
-    </Layout>
+    </>
   )
 }
 

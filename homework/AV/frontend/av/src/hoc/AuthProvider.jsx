@@ -3,19 +3,18 @@ import { createContext, useEffect, useState } from 'react'
 export const AuthContext = createContext(null)
 
 function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-
-  const signIn = (newUser, cb) => {
-    setUser(newUser)
+  const [isAuth, setIsAuth] = useState(false)
+  const signIn = (cb) => {
+    setIsAuth(true)
     cb()
   }
 
   const signOut = (cb) => {
-    setUser(null)
+    setIsAuth(false)
     cb()
   }
 
-  const value = { user, signIn, signOut }
+  const value = { isAuth, signIn, signOut }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

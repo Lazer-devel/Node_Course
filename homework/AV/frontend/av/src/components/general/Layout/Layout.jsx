@@ -1,18 +1,22 @@
 import { useRef, useState } from 'react'
-import Content from './Content'
 import Header from './Header'
 
 import './styles/layout.scss'
-import Entry from '../Entry/Entry'
+import Entry from './Entry/Entry'
+import { Outlet } from 'react-router'
 
-function Layout({ children }) {
+function Layout() {
   const [isModalActive, setModalActive] = useState(false)
   const [userName, setUserName] = useState(null)
   const modalRef = useRef(null)
   return (
     <>
       <Header activeAuth={() => setModalActive(true)} userName={userName} />
-      <Content>{children}</Content>
+      <div className="content">
+        <div className="content__layout">
+          <Outlet />
+        </div>
+      </div>
       <div
         className={`modal ${
           isModalActive ? 'modal--visible' : 'modal--hidden'

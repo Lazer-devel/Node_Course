@@ -63,7 +63,9 @@ function Header({ activeAuth, userName }) {
               </span>
             )}
 
-            <button className="nav__btn ">Подать объявление</button>
+            <NavLink className="nav__btn" to={'/new_ad'}>
+              Подать объявление
+            </NavLink>
           </ul>
         </div>
       </div>

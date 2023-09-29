@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import AuthForm from './AuthForm'
 import RegForm from './RegForm'
-import crissIcon from '../../../assets/cross.svg'
+import crissIcon from '../../../../assets/cross.svg'
 import './styles/entry.scss'
 
 function Entry({ isVisible, setHidden, setUserName }) {

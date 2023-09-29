@@ -27,3 +27,13 @@
     opacity: 0;
   }
 }
+
+.content {
+  width: display flex;
+  width: 1240px;
+  margin: 0 auto;
+
+  &__layout {
+    width: 905px;
+  }
+}

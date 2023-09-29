@@ -42,7 +42,7 @@ function MainPage() {
   }, [])
 
   return (
-    <Layout>
+    <>
       <div className="general">
         <h1 className="general__header">
           {annoumentCount} объявления о&nbsp;продаже авто в&nbsp;Беларуси
@@ -56,7 +56,7 @@ function MainPage() {
         className="mainPage__link-list"
       />
       <Filter />
-    </Layout>
+    </>
   )
 }
 

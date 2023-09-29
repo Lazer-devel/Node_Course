@@ -60,47 +60,45 @@ function Ad() {
   }
 
   return (
-    <Layout>
-      <div className="ad">
-        <div className="general">
-          <h1 className="general__header">
-            Продажа {mark} {model} {generation}, {year}&nbsp;г. {city}
-          </h1>
-        </div>
-        <div className="card">
-          <div className="gallery">
-            <div className="gallery__previous" onClick={prevClick}>
-              <img className="gallery__icon" src={leftArrow} alt="" />
-            </div>
-            <div className="gallery__next" onClick={nextClick}>
-              <img className="gallery__icon" src={rightArrow} alt="" />
-            </div>
-            <img
-              className="gallery__img"
-              src={`http://localhost:55555/ad/${markId}/${modelId}/${generationId}/${id}/${curImageId}.jpg`}
-              width={612}
-              height={439}
-              alt=""
-            />
+    <div className="ad">
+      <div className="general">
+        <h1 className="general__header">
+          Продажа {mark} {model} {generation}, {year}&nbsp;г. {city}
+        </h1>
+      </div>
+      <div className="card">
+        <div className="gallery">
+          <div className="gallery__previous" onClick={prevClick}>
+            <img className="gallery__icon" src={leftArrow} alt="" />
           </div>
-          <div className="description">
-            <span className="description__cost">{cost}&nbsp;y.e.</span>
-            <span className="description__info">
-              {year}&nbsp;г., {transmission}, {body}, {volume}&nbsp;л, {fuel},{' '}
-              {mileage}
-              &nbsp;км.
-            </span>
-            <span className="description__location">
-              {city} {date}
-            </span>
+          <div className="gallery__next" onClick={nextClick}>
+            <img className="gallery__icon" src={rightArrow} alt="" />
           </div>
+          <img
+            className="gallery__img"
+            src={`http://localhost:55555/ad/${markId}/${modelId}/${generationId}/${id}/${curImageId}.jpg`}
+            width={612}
+            height={439}
+            alt=""
+          />
         </div>
-        <div className="comment">
-          <h2 className="comment__header">Описание</h2>
-          <div className="comment__content">{comment}</div>
+        <div className="description">
+          <span className="description__cost">{cost}&nbsp;y.e.</span>
+          <span className="description__info">
+            {year}&nbsp;г., {transmission}, {body}, {volume}&nbsp;л, {fuel},{' '}
+            {mileage}
+            &nbsp;км.
+          </span>
+          <span className="description__location">
+            {city} {date}
+          </span>
         </div>
       </div>
-    </Layout>
+      <div className="comment">
+        <h2 className="comment__header">Описание</h2>
+        <div className="comment__content">{comment}</div>
+      </div>
+    </div>
   )
 }
 

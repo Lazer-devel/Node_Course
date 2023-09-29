@@ -1,7 +1,7 @@
-@import '../../../../constants.scss';
-@import '../../../../general.scss';
+@import '../../../../../constants.scss';
+@import '../../../../../general.scss';
 
-.auth {
+.reg {
   &__content {
     position: relative;
     margin-top: 20px;
@@ -16,6 +16,7 @@
   }
 
   &__error {
+    min-height: 10px;
     padding-top: 6px;
     color: $--red;
     font-size: 13px;
@@ -25,7 +26,6 @@
   }
 
   &__submit {
-    background-color: $--color-gray-300;
     box-shadow: none;
     color: #fff;
     box-sizing: border-box;
@@ -41,7 +41,7 @@
     text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;
-    cursor: pointer;
+
     -webkit-user-select: none;
     user-select: none;
 
