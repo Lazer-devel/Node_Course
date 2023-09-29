@@ -1,12 +1,16 @@
-import { Navigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hook/useAuth'
+import { useEffect } from 'react'
 
-function RequireAuth({ children, cb }) {
-  const { isAuth } = useAuth()
+function RequireAuth({ children }) {
+  const { login } = useAuth()
+  const navigate = useNavigate()
 
-  if (!isAuth) {
-    return cb()
-  }
+  useEffect(() => {
+    if (!login) {
+      navigate('/')
+    }
+  })
 
   return children
 }

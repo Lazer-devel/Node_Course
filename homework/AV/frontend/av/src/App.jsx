@@ -6,6 +6,8 @@ import { Routes, Route } from 'react-router-dom'
 import Ad from './components/ad/Ad'
 import RequireAuth from './hoc/RequireAuth'
 import Layout from './components/general/Layout/Layout'
+import { useState } from 'react'
+import AdEditor from './components/adEditor/AdEditor'
 
 //FIXME
 function App() {
@@ -23,8 +25,8 @@ function App() {
           <Route
             path="new_ad"
             element={
-              <RequireAuth cb={() => console.log('ad')}>
-                <></>
+              <RequireAuth cb={() => {}}>
+                <AdEditor />
               </RequireAuth>
             }
           />

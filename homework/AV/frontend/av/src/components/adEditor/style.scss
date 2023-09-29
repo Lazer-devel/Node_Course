@@ -1,0 +1,73 @@
+@import '../../constants.scss';
+@import '../../general.scss';
+
+.ad-editor {
+  &__content {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1px;
+  }
+
+  &__comment {
+    min-height: 200px;
+  }
+
+  &__files {
+    background-color: $--white;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    column-gap: 10px;
+    height: 60px;
+    box-sizing: border-box;
+  }
+  &__upload {
+    flex-shrink: 0;
+    border-radius: 4px;
+    max-height: 35px;
+    box-sizing: border-box;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    border: 0px;
+    color: #fff;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 600;
+    background-color: color(display-p3 0.055 0.5333 0.8745);
+    cursor: pointer;
+  }
+
+  &__control {
+    padding: 5px;
+    display: flex;
+    justify-content: flex-end;
+    background-color: $--white;
+    height: 50px;
+    align-items: center;
+  }
+
+  &__submit {
+    border-radius: 4px;
+    max-height: 35px;
+    box-sizing: border-box;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    border: 0px;
+    color: #fff;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 600;
+    background-color: color(display-p3 0.055 0.5333 0.8745);
+    cursor: pointer;
+  }
+  &__files-title {
+    overflow-y: auto;
+    flex-shrink: 1;
+  }
+  input[type='file'] {
+    display: none;
+  }
+}

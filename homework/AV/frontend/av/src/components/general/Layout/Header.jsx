@@ -1,8 +1,12 @@
 import './styles/header.scss'
 import logo from '../../../assets/av.svg'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../hook/useAuth'
 
-function Header({ activeAuth, userName }) {
+function Header({ activeAuth }) {
+  const { login } = useAuth()
+  const navigate = useNavigate()
+
   const createHeaders = () => {
     const createDropDownList = (children) => {
       return (
@@ -55,17 +59,25 @@ function Header({ activeAuth, userName }) {
             </li>
           </ul>
           <ul className="nav__personal">
-            {userName ? (
-              <span className="nav__username">{`Вы вошли как: ${userName}`}</span>
+            {login ? (
+              <span className="nav__username">{`Вы вошли как: ${login}`}</span>
             ) : (
               <span href="/notFound" className="nav__link" onClick={activeAuth}>
                 Войти
               </span>
             )}
 
-            <NavLink className="nav__btn" to={'/new_ad'}>
+            <button
+              className="nav__btn"
+              onClick={() => {
+                if (login) {
+                  return navigate('/new_ad')
+                }
+                activeAuth()
+              }}
+            >
               Подать объявление
-            </NavLink>
+            </button>
           </ul>
         </div>
       </div>

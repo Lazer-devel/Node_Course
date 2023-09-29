@@ -325,4 +325,22 @@ export default class DbProvider {
       ],
     })
   }
+
+  static async isSessionExist(token) {
+    const user = await Session.findOne({
+      attributes: [[this.#sequelize.col('User.login'), 'login']],
+
+      include: [
+        {
+          model: User,
+          require: true,
+          attributes: [],
+        },
+      ],
+      where: {
+        token,
+      },
+    })
+    return user.login
+  }
 }

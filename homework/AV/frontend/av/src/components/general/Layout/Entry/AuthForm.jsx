@@ -4,7 +4,7 @@ import './styles/auth.scss'
 import { createHashPassword } from './utils'
 import { useAuth } from '../../../../hook/useAuth'
 
-function AuthForm({ setHidden, setUserName }) {
+function AuthForm({ setHidden }) {
   const [login, setLogin] = useState('niklazq@mail.ru')
   const [password, setPassword] = useState('5034630kK@')
   const [error, setError] = useState(null)
@@ -28,8 +28,8 @@ function AuthForm({ setHidden, setUserName }) {
 
       if (status === 'ok') {
         setHidden()
-        signIn()
-        return setUserName(login)
+        signIn(login)
+        return
       }
       return setError(content)
     } catch (err) {

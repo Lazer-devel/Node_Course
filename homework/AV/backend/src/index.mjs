@@ -154,4 +154,21 @@ app.get('/filter', async (req, res) => {
   res.json(await DbProvider.getAds(req.query))
 })
 
+const checkAuth = async (req, res, next) => {
+  const token = req.cookies.token
+  if (token) {
+    const login = await DbProvider.isSessionExist(token)
+    if (login) {
+      return req.url.includes('checkAuth') ? res.json(login) : next()
+    }
+  }
+  return res.status(401).send()
+}
+app.post('/checkAuth', checkAuth)
+
+app.post('/new_ad', checkAuth, async (req, res) => {
+  console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaa')
+  res.send()
+})
+
 app.listen(EXPRESS_PORT, () => console.log('express started'))

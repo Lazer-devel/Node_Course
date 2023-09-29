@@ -7,11 +7,10 @@ import { Outlet } from 'react-router'
 
 function Layout() {
   const [isModalActive, setModalActive] = useState(false)
-  const [userName, setUserName] = useState(null)
   const modalRef = useRef(null)
   return (
     <>
-      <Header activeAuth={() => setModalActive(true)} userName={userName} />
+      <Header activeAuth={() => setModalActive(true)} />
       <div className="content">
         <div className="content__layout">
           <Outlet />
@@ -31,7 +30,6 @@ function Layout() {
         <Entry
           isVisible={isModalActive}
           setHidden={() => setModalActive(false)}
-          setUserName={(userName) => setUserName(userName)}
         />
       </div>
     </>
