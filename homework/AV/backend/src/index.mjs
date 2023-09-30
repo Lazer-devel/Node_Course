@@ -4,8 +4,9 @@ import nodemailer from 'nodemailer'
 import cookieParser from 'cookie-parser'
 import fs from 'fs'
 import bcrypt from 'bcrypt'
-
+import busboy from 'busboy'
 import { EXPRESS_PORT } from './constants.mjs'
+import { nanoid } from 'nanoid'
 import DbProvider from './dataBase/dbProvider.mjs'
 import path from 'path'
 import { __dirname } from './constants.mjs'
@@ -167,8 +168,113 @@ const checkAuth = async (req, res, next) => {
 app.post('/checkAuth', checkAuth)
 
 app.post('/new_ad', checkAuth, async (req, res) => {
-  console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaa')
-  res.send()
+  const token = req.cookies.token
+  const bb = busboy({ headers: req.headers })
+
+  const id = nanoid()
+  const temporaryFolderPath = path.resolve(
+    __dirname,
+    `./static/uploading/${id}`
+  )
+  await fs.promises.mkdir(temporaryFolderPath, { recursive: true })
+
+  let mark,
+    model,
+    generation,
+    year,
+    volume,
+    cost,
+    comment = ''
+  let photoAmount = 0
+
+  const fileHandler = (_, file, info) => {
+    ++photoAmount
+    const fileExtension = Buffer.from(info.filename, 'latin1')
+      .toString('utf-8')
+      .split('.')
+      .pop()
+
+    const writer = fs.createWriteStream(
+      `${temporaryFolderPath}/${photoAmount}.${fileExtension}`
+    )
+    file.pipe(writer)
+  }
+
+  const fieldHandler = (name, value) => {
+    switch (name) {
+      case 'mark': {
+        mark = value
+        return
+      }
+
+      case 'model': {
+        model = value
+        return
+      }
+      case 'generation': {
+        generation = value
+        return
+      }
+      case 'year': {
+        year = value
+        return
+      }
+      case 'volume': {
+        volume = value
+        return
+      }
+      case 'cost': {
+        cost = value
+        return
+      }
+      case 'comment': {
+        comment = value
+        return
+      }
+    }
+  }
+
+  const errorHandler = () => res.status(500).send('Ошибка обработки запроса')
+
+  const finishHandler = async () => {
+    mark = await DbProvider.getMarkIdByName(mark)
+    model = await DbProvider.getModelIdByName(model)
+    generation = await DbProvider.getGenerationIdByName(generation)
+
+    await DbProvider.createAd(
+      token,
+      id,
+      mark,
+      model,
+      generation,
+      year,
+      volume,
+      cost,
+      comment,
+      photoAmount
+    )
+
+    const folderPath = path.resolve(
+      __dirname,
+      `./static/ad/${mark}/${model}/${generation}/${id}`
+    )
+    await fs.promises.mkdir(folderPath, { recursive: true })
+
+    await fs.promises.cp(temporaryFolderPath, folderPath, { recursive: true })
+
+    bb.off('file', fileHandler)
+    bb.off('field', fieldHandler)
+    bb.off('error', errorHandler)
+    bb.off('finish', finishHandler)
+    res.send()
+  }
+
+  bb.on('file', fileHandler)
+  bb.on('field', fieldHandler)
+  bb.on('error', errorHandler)
+  bb.on('finish', finishHandler)
+
+  req.pipe(bb)
 })
 
 app.listen(EXPRESS_PORT, () => console.log('express started'))

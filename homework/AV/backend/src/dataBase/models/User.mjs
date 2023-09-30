@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize'
 import { login_fn } from '../constant.mjs'
 import Session from './Session.mjs'
+import Announcement from './Announcement.mjs'
 
 class User extends Model {
   static init(sequelize) {
@@ -44,6 +45,10 @@ class User extends Model {
     User.hasMany(Session, {
       foreignKey: 'login',
       targetKey: 'login',
+    })
+    User.hasMany(Announcement, {
+      foreignKey: 'id_user',
+      targetKey: 'id',
     })
   }
 }

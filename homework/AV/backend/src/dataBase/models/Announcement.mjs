@@ -7,6 +7,7 @@ import {
 import Generation from './Generation.mjs'
 import CarModel from './CarModel.mjs'
 import Mark from './Mark.mjs'
+import User from './User.mjs'
 
 export class Announcement extends Model {
   static init(sequelize) {
@@ -18,9 +19,8 @@ export class Announcement extends Model {
           autoIncrement: true,
         },
         id_user: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.STRING(128),
           allowNull: false,
-          defaultValue: 0,
         },
         id_car_mark: {
           type: DataTypes.INTEGER,
@@ -54,6 +54,34 @@ export class Announcement extends Model {
           allowNull: false,
           defaultValue: 0,
         },
+        city: {
+          type: DataTypes.STRING(50),
+          allowNull: false,
+        },
+        mileage: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
+        fuel: {
+          type: DataTypes.STRING(50),
+          allowNull: false,
+        },
+        transmission: {
+          type: DataTypes.STRING(50),
+          allowNull: false,
+        },
+        body: {
+          type: DataTypes.STRING(50),
+          allowNull: false,
+        },
+        date: {
+          type: DataTypes.DATE,
+          allowNull: false,
+        },
+        photo_amount: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
       },
       {
         sequelize,
@@ -74,6 +102,10 @@ export class Announcement extends Model {
     Announcement.belongsTo(Generation, {
       foreignKey: 'id_car_generation',
       targetKey: 'id_car_generation',
+    })
+    Announcement.belongsTo(User, {
+      foreignKey: 'id_user',
+      targetKey: 'id',
     })
   }
 }

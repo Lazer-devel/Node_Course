@@ -1,8 +1,7 @@
-import { Sequelize, Op, Model } from 'sequelize'
+import { Sequelize, Op, Model, where } from 'sequelize'
 import { __dirname } from '../constants.mjs'
 import fs from 'fs'
 import path from 'path'
-
 import Mark from './models/Mark.mjs'
 import CarModel from './models/CarModel.mjs'
 import Generation from './models/Generation.mjs'
@@ -279,7 +278,6 @@ export default class DbProvider {
     if (id) {
       where.id_announcement = id
     }
-
     return await Announcement.findAll({
       raw: true,
       attributes: [
@@ -342,5 +340,86 @@ export default class DbProvider {
       },
     })
     return user.login
+  }
+
+  static async getMarkIdByName(mark) {
+    return (
+      await Mark.findOne({
+        attributes: ['id_car_mark'],
+        where: {
+          name: mark,
+        },
+      })
+    ).toJSON().id_car_mark
+  }
+
+  static async getModelIdByName(model) {
+    return (
+      await CarModel.findOne({
+        attributes: ['id_car_model'],
+        where: {
+          name: model,
+        },
+      })
+    ).toJSON().id_car_model
+  }
+
+  static async getGenerationIdByName(generation) {
+    return (
+      await Generation.findOne({
+        attributes: ['id_car_generation'],
+        where: {
+          name: generation,
+        },
+      })
+    ).toJSON().id_car_generation
+  }
+
+  static async createAd(
+    token,
+    id,
+    id_car_mark,
+    id_car_model,
+    id_car_generation,
+    year,
+    volume,
+    cost,
+    comment,
+    photo_amount
+  ) {
+    const id_user = (
+      await Session.findOne({
+        attributes: [[this.#sequelize.col('User.id'), 'id_user']],
+        include: [
+          {
+            model: User,
+            required: true,
+            attributes: [],
+          },
+        ],
+        where: {
+          token,
+        },
+      })
+    ).toJSON().id_user
+
+    Announcement.create({
+      id_announcement: id,
+      id_user,
+      id_car_mark,
+      id_car_model,
+      id_car_generation,
+      year,
+      volume,
+      cost,
+      comment,
+      city: 'Минск',
+      mileage: 100000,
+      fuel: 'Дизель',
+      transmission: 'Автомат',
+      body: 'Седан',
+      date: Sequelize.fn('NOW'),
+      photo_amount,
+    })
   }
 }

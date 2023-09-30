@@ -4,6 +4,7 @@ import Input from '../general/Input'
 
 import './style.scss'
 import { createAgeArr, createVolumeArr } from '../mainPage/utils'
+import { useNavigate } from 'react-router'
 
 function AdEditor() {
   const [mark, setMark] = useState('')
@@ -15,12 +16,27 @@ function AdEditor() {
   const [modelList, setModelList] = useState([])
   const [generationList, setGenerationList] = useState([])
   const commentRef = useRef(null)
-
+  const navigate = useNavigate()
+  const [isSendDisabled, setIsSendDisabled] = useState(false)
   const [cost, setCost] = useState('')
 
   const [fileTitles, setFileTitles] = useState([])
   const uploadRef = useRef(null)
 
+  useEffect(() => {
+    setIsSendDisabled(
+      !(
+        mark &&
+        model &&
+        generation &&
+        year &&
+        volume &&
+        cost &&
+        commentRef.current.value &&
+        uploadRef.current.files.length
+      )
+    )
+  }, [cost, generation, mark, model, volume, year])
   useEffect(() => {
     const init = async () => {
       const marks = await fetch('http://localhost:55555/marks', {
@@ -59,6 +75,7 @@ function AdEditor() {
   }
 
   const submit = async () => {
+    setIsSendDisabled(true)
     const data = new FormData()
     data.append('mark', mark)
     data.append('model', model)
@@ -70,16 +87,14 @@ function AdEditor() {
     Array.from(uploadRef.current.files).forEach((file) => {
       data.append(file.name, file)
     })
-    const response = await fetch('http://localhost:55555/new_ad', {
+
+    await fetch('http://localhost:55555/new_ad', {
       method: 'POST',
       credentials: 'include',
-      headers: {
-        'Content-type': 'multipart/form-data',
-      },
       body: data,
     })
 
-    console.log(response.status)
+    navigate('/')
   }
 
   return (
@@ -143,7 +158,11 @@ function AdEditor() {
           <div className="ad-editor__files-title">{fileTitles.join(', ')}</div>
         </div>
         <div className="ad-editor__control">
-          <button className="ad-editor__submit" onClick={submit}>
+          <button
+            className="ad-editor__submit"
+            onClick={submit}
+            disabled={isSendDisabled}
+          >
             Отправить
           </button>
         </div>

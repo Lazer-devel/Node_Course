@@ -76,7 +76,7 @@ function Ad() {
           </div>
           <img
             className="gallery__img"
-            src={`http://localhost:55555/ad/${markId}/${modelId}/${generationId}/${id}/${curImageId}.jpg`}
+            src={`http://localhost:55555/ad/${markId}/${modelId}/${generationId}/${id}/${curImageId}.jpeg`}
             width={612}
             height={439}
             alt=""

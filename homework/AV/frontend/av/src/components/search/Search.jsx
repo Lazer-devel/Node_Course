@@ -30,13 +30,18 @@ function Search() {
         url = `http://localhost:55555/filter?${searchParams.toString()}`
       } else {
         url = 'http://localhost:55555/catalog'
-        mark && url.concat(`/${mark}`)
-        mark && model && url.concat(`/${model}`)
+
+        url =
+          mark && model
+            ? url.concat(`/${mark}/${model}`)
+            : (url = url.concat(`/${mark}`))
       }
       const response = await fetch(url, {
         cache: 'no-store',
       })
-      setAds(await response.json())
+      const a = await response.json()
+      console.log(a)
+      setAds(a)
     }
     getAds()
   }, [location.pathname, mark, model, searchParams])
