@@ -34,7 +34,7 @@ function Reg() {
       return
     }
     try {
-      const response = await fetch('http://localhost:55555/reg', {
+      const response = await fetch('/reg', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
@@ -45,12 +45,12 @@ function Reg() {
           password: await createHashPassword(password),
         }),
       })
-      const { status, content } = await response.json()
+      const { status, message } = await response.json()
 
-      if (status === 'ok') {
+      if (status === 200) {
         return setIsRegSucced(true)
       }
-      return setError(content)
+      return setError(message)
     } catch (err) {
       return setError('Произошла ошибка.. повторите попытку позже')
     }

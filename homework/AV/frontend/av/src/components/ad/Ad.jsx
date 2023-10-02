@@ -1,7 +1,6 @@
 import { useLocation } from 'react-router'
 import './style.scss'
 import { useEffect, useState } from 'react'
-import Layout from '../general/Layout/Layout'
 import rightArrow from '../../assets/gallery-arrow-right.png'
 import leftArrow from '../../assets/gallery-arrow-left.png'
 
@@ -31,15 +30,11 @@ function Ad() {
   } = initData
   useEffect(() => {
     const init = async () => {
-      const response = await fetch(
-        `http://localhost:55555${location.pathname}`,
-        {
-          cache: 'no-store',
-        }
-      )
+      const response = await fetch(location.pathname, {
+        cache: 'no-store',
+      })
       const data = await response.json()
       setInitData(data)
-      console.log(data)
     }
     init()
   }, [location.pathname])
@@ -52,7 +47,6 @@ function Ad() {
   }
 
   const prevClick = () => {
-    console.log(photo_amount)
     if (curImageId === 1) {
       return setCurImageId(photo_amount)
     }
@@ -76,7 +70,7 @@ function Ad() {
           </div>
           <img
             className="gallery__img"
-            src={`http://localhost:55555/ad/${markId}/${modelId}/${generationId}/${id}/${curImageId}.jpeg`}
+            src={`/ad/${markId}/${modelId}/${generationId}/${id}/610x440/${curImageId}.jpeg`}
             width={612}
             height={439}
             alt=""

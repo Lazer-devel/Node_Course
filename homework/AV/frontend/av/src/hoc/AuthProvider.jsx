@@ -9,7 +9,7 @@ function AuthProvider({ children }) {
 
   useEffect(() => {
     const auth = async () => {
-      const response = await fetch('http://localhost:55555/checkAuth', {
+      const response = await fetch('/checkAuth', {
         method: 'POST',
         credentials: 'include',
       })
@@ -21,7 +21,7 @@ function AuthProvider({ children }) {
     }
 
     auth()
-  }, [navigator])
+  }, [])
 
   const signIn = (login) => {
     setLogin(login)

@@ -15,13 +15,12 @@ function AdEditor() {
   const [markList, setMarkList] = useState([])
   const [modelList, setModelList] = useState([])
   const [generationList, setGenerationList] = useState([])
-  const commentRef = useRef(null)
+  const [comment, setComment] = useState('')
+  const [cost, setCost] = useState('')
+  const [uploadFilse, setUploadFiles] = useState([])
   const navigate = useNavigate()
   const [isSendDisabled, setIsSendDisabled] = useState(false)
-  const [cost, setCost] = useState('')
-
   const [fileTitles, setFileTitles] = useState([])
-  const uploadRef = useRef(null)
 
   useEffect(() => {
     setIsSendDisabled(
@@ -32,27 +31,27 @@ function AdEditor() {
         year &&
         volume &&
         cost &&
-        commentRef.current.value &&
-        uploadRef.current.files.length
+        comment &&
+        uploadFilse.length
       )
     )
-  }, [cost, generation, mark, model, volume, year])
+  }, [comment, cost, generation, mark, model, uploadFilse.length, volume, year])
   useEffect(() => {
     const init = async () => {
-      const marks = await fetch('http://localhost:55555/marks', {
+      const marks = await fetch('/marks', {
         cache: 'no-store',
         credentials: 'include',
       })
       setMarkList(await marks.json())
 
       if (mark) {
-        const models = await fetch(`http://localhost:55555/models?mark=${mark}`)
+        const models = await fetch(`/models?mark=${mark}`)
         setModelList(await models.json())
       }
 
       if (model) {
         const generations = await fetch(
-          `http://localhost:55555/generations?mark=${mark}&model=${model}`
+          `/generations?mark=${mark}&model=${model}`
         )
         setGenerationList((await generations.json()).map((el) => el.name))
       }
@@ -83,12 +82,12 @@ function AdEditor() {
     data.append('year', year)
     data.append('volume', volume)
     data.append('cost', cost)
-    data.append('comment', commentRef.current.value)
-    Array.from(uploadRef.current.files).forEach((file) => {
+    data.append('comment', comment)
+    Array.from(uploadFilse).forEach((file) => {
       data.append(file.name, file)
     })
 
-    await fetch('http://localhost:55555/new_ad', {
+    await fetch('/new_ad', {
       method: 'POST',
       credentials: 'include',
       body: data,
@@ -137,17 +136,18 @@ function AdEditor() {
         <textarea
           className="ad-editor__comment textarea"
           placeholder="Комметарий"
-          ref={commentRef}
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
         ></textarea>
         <div className="ad-editor__files">
           <label className="ad-editor__upload">
             <input
               type="file"
               multiple
-              ref={uploadRef}
-              onChange={() => {
-                console.log(uploadRef.current.files)
-                const fileNames = Array.from(uploadRef.current.files).map(
+              onChange={(e) => {
+                console.log(e.target.files)
+                setUploadFiles(e.target.files)
+                const fileNames = Array.from(e.target.files).map(
                   (file) => file.name
                 )
                 setFileTitles(fileNames)

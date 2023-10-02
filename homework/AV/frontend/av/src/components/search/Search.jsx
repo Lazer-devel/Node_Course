@@ -27,9 +27,9 @@ function Search() {
       let url = ''
       // FIXME
       if (location.pathname === '/filter') {
-        url = `http://localhost:55555/filter?${searchParams.toString()}`
+        url = `/filter?${searchParams.toString()}`
       } else {
-        url = 'http://localhost:55555/catalog'
+        url = '/catalog'
 
         url =
           mark && model

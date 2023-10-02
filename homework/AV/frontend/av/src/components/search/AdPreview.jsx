@@ -29,7 +29,7 @@ function AdPreview({ ad }) {
         className="ad-preview__img"
       >
         <img
-          src={`http://localhost:55555/ad/${markId}/${modelId}/${generationId}/${id}/1.jpeg`}
+          src={`/ad/${markId}/${modelId}/${generationId}/${id}/200x200/1.jpeg`}
           alt=""
           width="200px"
           height="200px"

@@ -12,7 +12,7 @@ function AuthForm({ setHidden }) {
 
   const submit = async () => {
     try {
-      const response = await fetch('http://localhost:55555/auth', {
+      const response = await fetch('/auth', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
@@ -24,14 +24,14 @@ function AuthForm({ setHidden }) {
         }),
       })
 
-      const { status, content } = await response.json()
+      const { status, message } = await response.json()
 
-      if (status === 'ok') {
+      if (status === 200) {
         setHidden()
         signIn(login)
         return
       }
-      return setError(content)
+      return setError(message)
     } catch (err) {
       return setError('Ошибка авторизации')
     }

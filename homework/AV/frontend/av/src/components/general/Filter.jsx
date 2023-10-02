@@ -129,7 +129,7 @@ function Filter() {
         <>
           <img
             key={id}
-            src={`http://localhost:55555/generations/${id}.jpeg`}
+            src={`/generations/${id}.jpeg`}
             alt={name}
             width="200px"
             height="120px"

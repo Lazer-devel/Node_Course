@@ -21,7 +21,7 @@ export const createVolumeArr = () => {
 export const fetchData = async (url, options) => {
   let response
   try {
-    response = await fetch(`http://localhost:55555${url}`, options)
+    response = await fetch(url, options)
   } catch (err) {
     console.log(err.message)
   }
