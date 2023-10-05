@@ -13,7 +13,7 @@ function createLetter(reciever, id) {
     from: 'niklazq9@gmail.com',
     to: `${reciever}`,
     subject: 'FileStorage Registration',
-    html: `<a href="http://localhost:3000/registration?id=${id}">Click Me!</a>`,
+    html: `<a href="http://167.99.141.158/registration?id=${id}">Click Me!</a>`,
   }
 }
 
