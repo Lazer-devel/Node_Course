@@ -1,0 +1,74 @@
+@import '../../../styles/constants.scss';
+
+.filter {
+  &__main-info {
+    display: flex;
+  }
+
+  &__secondary {
+    margin-top: 10px;
+    display: flex;
+  }
+
+  &__control {
+    display: flex;
+    justify-content: flex-end;
+    padding: 13px 20px 20px;
+    background-color: #f0f4f8;
+    border-top: 1px solid #e7edf3;
+    border-radius: 0 0 2px 2px;
+  }
+
+  &__show {
+    padding: 10px 20px 8px;
+    background-color: $--color-green-100;
+    box-shadow: 0 1px 0 #00a368;
+    box-shadow: 0 1px 0 $--color-green-110;
+    color: #fff;
+    border-radius: 4px;
+    box-sizing: border-box;
+    border: none;
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:not(.filter__show--disabled):hover {
+      background-color: #00a368;
+      background-color: $--color-green-110;
+      box-shadow: 0 1px 0 #058f5d;
+      box-shadow: 0 1px 0 $--color-green-120;
+      color: #fff;
+    }
+
+    &--disabled {
+      background-color: $--color-gray-350;
+      box-shadow: none;
+      color: #fff;
+      cursor: not-allowed;
+    }
+  }
+
+  &__field {
+    flex: 1 1 33.33%;
+    background-color: $--white;
+
+    &:not(:last-child) {
+      border-right: 2px inset $--body-bg;
+    }
+
+    &-controls {
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    &-control {
+      position: relative;
+      box-sizing: border-box;
+
+      &:last-child {
+        flex: 1 1 auto;
+      }
+    }
+  }
+}

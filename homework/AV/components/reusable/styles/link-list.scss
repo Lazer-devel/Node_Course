@@ -1,0 +1,35 @@
+@import '../../../styles/constants.scss';
+
+.link-list {
+  display: flex;
+  flex-direction: column;
+  row-gap: 15px;
+  flex-wrap: wrap;
+
+  &__link {
+    &--disabled {
+      cursor: default;
+      color: $--color-gray-350;
+      &:hover {
+        color: $--color-gray-350;
+      }
+    }
+  }
+
+  &__content {
+    display: flex;
+  }
+
+  &__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__subtitle {
+    padding-left: 8px;
+    color: $--color-gray-350;
+    font-size: 12px;
+    letter-spacing: 0.08px;
+  }
+}

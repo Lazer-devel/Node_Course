@@ -1,0 +1,84 @@
+@import './constants.scss';
+
+.announment-list {
+  background-color: $--white;
+  display: flex;
+}
+
+.ad-preview {
+  padding: 20px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 200px 202px 202px 200px;
+  grid-template-rows: 1fr repeat(2, min-content);
+  gap: 8px 20px;
+
+  grid-template-areas:
+    'img title about price'
+    'img comment comment price'
+    'img date date date';
+
+  &__img {
+    grid-area: img;
+  }
+  &__title {
+    grid-area: title;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 22px;
+  }
+  &__about {
+    grid-area: about;
+    display: flex;
+    flex-direction: column;
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  &__mileage {
+    margin-top: 5px;
+  }
+  &__price {
+    grid-area: price;
+    align-self: flex-start;
+    color: $--color-gray-600;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    background-color: $--color-yellow-130;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 22px;
+    padding: 2px 5px 1px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  &__comment {
+    grid-area: comment;
+    color: $--color-gray-400;
+    font-size: 13px;
+    line-height: 17px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  &__info {
+    grid-area: date;
+  }
+
+  &__location {
+    font-weight: 600;
+    white-space: nowrap;
+    margin-right: 8px;
+  }
+
+  &__date {
+    color: #777d82;
+    white-space: nowrap;
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid $--color-gray-150;
+  }
+}

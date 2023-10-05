@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "start": "next start -p 55555"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "busboy": "^1.6.0",
+    "mysql2": "^3.6.1",
+    "nanoid": "^5.0.1",
+    "next": "latest",
+    "nodemailer": "^6.9.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "sass": "^1.68.0",
+    "sequelize": "^6.33.0",
+    "sharp": "^0.32.6"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "dataBase": "AV",
+  "user": "node",
+  "password": "5034630kK)",
+  "options": {
+    "host": "167.99.141.158",
+    "dialect": "mysql",
+    "logging": false
+  }
+}

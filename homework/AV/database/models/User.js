@@ -1,0 +1,55 @@
+import { DataTypes, Model } from 'sequelize'
+import Session from './Session.js'
+import Announcement from './Announcement.js'
+
+class User extends Model {
+  static init(sequelize) {
+    return super.init(
+      {
+        id: {
+          type: DataTypes.STRING(128),
+          primaryKey: true,
+        },
+        login: {
+          type: DataTypes.STRING(128),
+          allowNull: false,
+        },
+        password: {
+          type: DataTypes.STRING(128),
+          defaultValue: '',
+          allowNull: false,
+        },
+        isActivated: {
+          type: DataTypes.TINYINT,
+          allowNull: false,
+        },
+        regDate: {
+          type: DataTypes.DATE,
+          allowNull: false,
+        },
+      },
+      {
+        indexes: [
+          {
+            fields: ['login'],
+          },
+        ],
+        sequelize,
+        timestamps: false,
+      }
+    )
+  }
+
+  static assosiate() {
+    User.hasMany(Session, {
+      foreignKey: 'login',
+      targetKey: 'login',
+    })
+    User.hasMany(Announcement, {
+      foreignKey: 'id_user',
+      targetKey: 'id',
+    })
+  }
+}
+
+export default User

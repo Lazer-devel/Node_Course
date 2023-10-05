@@ -1,0 +1,73 @@
+@import './constants.scss';
+
+.ad {
+  margin-top: 40px;
+  padding: 20px;
+  background-color: $--white;
+}
+
+.card {
+  display: flex;
+  column-gap: 20px;
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  &__cost {
+    margin-right: 8px;
+    color: #181a1b;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 24px;
+    white-space: nowrap;
+  }
+}
+.comment {
+  margin-top: 20px;
+  &__header {
+    margin: 0 0 7px;
+    color: #181a1b;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 24px;
+  }
+
+  &__content {
+    width: 612px;
+    font-size: 15px;
+    line-height: 24px;
+  }
+}
+
+.gallery {
+  width: 612px;
+  position: relative;
+  cursor: pointer;
+
+  &__previous {
+    position: absolute;
+    height: 100%;
+    width: 50%;
+    display: flex;
+    align-items: center;
+  }
+  &__next {
+    position: absolute;
+    height: 100%;
+    width: 50%;
+    right: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  &__icon {
+    width: 25px;
+    height: 27px;
+    user-select: none;
+  }
+}
