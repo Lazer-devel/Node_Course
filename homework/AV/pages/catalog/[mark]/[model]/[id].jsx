@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Image from 'next/image'
-
+import Head from 'next/head'
 import '../../../../styles/ad.scss'
 
 //610x440
@@ -55,57 +55,73 @@ const Component = ({ initData }) => {
   }
 
   return (
-    <div className="ad">
-      <div className="general">
-        <h1 className="general__header">
-          Продажа {mark} {model} {generation}, {year}&nbsp;г. {city}
-        </h1>
-      </div>
-      <div className="card">
-        <div className="gallery">
-          <div className="gallery__previous" onClick={prevClick}>
-            <Image
-              className="gallery__icon"
-              width={25}
-              height={27}
-              src="/leftArrow.png"
+    <>
+      <Head>
+        <title>
+          {`${mark} ${model}, ${year}г., ${volume}л., купить в ${city} - цена ${cost} $, фото, характеристики. av.by — объявления о продаже автомобилей. ${id}`}
+        </title>
+        <meta
+          content={`${mark} ${model}, ${year}г., ${volume}л., купить в ${city}. Цена и контакты продавца.`}
+          name="description"
+        />
+        <meta content={comment} property="og:description" />
+        <meta
+          content={`${mark} ${model}, ${year}г., продажа, купить, объявления, ${city}`}
+          name="keywords"
+        />
+      </Head>
+      <div className="ad">
+        <div className="general">
+          <h1 className="general__header">
+            Продажа {mark} {model} {generation}, {year}&nbsp;г. {city}
+          </h1>
+        </div>
+        <div className="card">
+          <div className="gallery">
+            <div className="gallery__previous" onClick={prevClick}>
+              <Image
+                className="gallery__icon"
+                width={25}
+                height={27}
+                src="/leftArrow.png"
+                alt=""
+              />
+            </div>
+            <div className="gallery__next" onClick={nextClick}>
+              <Image
+                className="gallery__icon"
+                width={25}
+                height={27}
+                src="/rigthArrow.png"
+                alt=""
+              />
+            </div>
+            <img
+              className="gallery__img"
+              src={`/ad/${markId}/${modelId}/${generationId}/${id}/610x440/${curImageId}.jpeg`}
+              width="612px"
+              height="439px"
               alt=""
             />
           </div>
-          <div className="gallery__next" onClick={nextClick}>
-            <Image
-              className="gallery__icon"
-              width={25}
-              height={27}
-              src="/rigthArrow.png"
-              alt=""
-            />
+          <div className="description">
+            <span className="description__cost">{cost}&nbsp;y.e.</span>
+            <span className="description__info">
+              {year}&nbsp;г., {transmission}, {body}, {volume}&nbsp;л, {fuel},{' '}
+              {mileage}
+              &nbsp;км.
+            </span>
+            <span className="description__location">
+              {city} {date}
+            </span>
           </div>
-          <img
-            className="gallery__img"
-            src={`/ad/${markId}/${modelId}/${generationId}/${id}/610x440/${curImageId}.jpeg`}
-            width="612px"
-            height="439px"
-            alt=""
-          />
         </div>
-        <div className="description">
-          <span className="description__cost">{cost}&nbsp;y.e.</span>
-          <span className="description__info">
-            {year}&nbsp;г., {transmission}, {body}, {volume}&nbsp;л, {fuel},{' '}
-            {mileage}
-            &nbsp;км.
-          </span>
-          <span className="description__location">
-            {city} {date}
-          </span>
+        <div className="comment">
+          <h2 className="comment__header">Описание</h2>
+          <div className="comment__content">{comment}</div>
         </div>
       </div>
-      <div className="comment">
-        <h2 className="comment__header">Описание</h2>
-        <div className="comment__content">{comment}</div>
-      </div>
-    </div>
+    </>
   )
 }
 

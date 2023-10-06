@@ -54,7 +54,7 @@ function Header({ activeAuth }) {
           <ul className="nav__main">
             {createHeaders()}
             <li className="nav__item nav__item--alt">
-              <a className="nav__link" href="/notFound">
+              <a className="nav__link" href="/">
                 <span className="nav__link-text">Проверка VIN </span>
               </a>
             </li>

@@ -1,7 +1,7 @@
 import Filter from '../../../components/reusable/Filter'
 import LinkList from '../../../components/reusable/LinkList'
 import AdList from '../../../components/search/AdList'
-
+import Head from 'next/head'
 import '../../../styles/search.scss'
 
 export const getServerSideProps = async (context) => {
@@ -25,6 +25,23 @@ export const getServerSideProps = async (context) => {
 const Component = ({ mark, adsByModel, ads }) => {
   return (
     <>
+      <Head>
+        <title>
+          {ads.length} о продаже автомобилей {mark} в&nbsp;Беларуси
+        </title>
+        <meta
+          content={`Продажа ${mark} с пробегом в Беларуси. ✔ ${ads.length} объявления в базе ✔ подписка на новые объявления ✔ актуальные цены. Купить или продать автомобиль ${mark} на Автомалиновке. Частные объявления о продаже автомобилей ${mark}`}
+          name="description"
+        ></meta>
+        <meta
+          content={`${ads.length} объявлений о продаже ${mark} в Беларуси. Цены, фотографии и характеристики автомобилей ${mark}`}
+          property="og:description"
+        />
+        <meta
+          content={`${mark}, цена, продать, объявления, с пробегом, новая, бу`}
+          name="keywords"
+        />
+      </Head>
       <div className="general">
         <h1 className="general__header">
           Продажа автомобилей {mark} в&nbsp;Беларуси

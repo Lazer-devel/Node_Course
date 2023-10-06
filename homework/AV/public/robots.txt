@@ -1,22 +1,26 @@
-User-agent: Yandex
-Disallow: /model_catalog
-Disallow: /parts_catalog
-Disallow: /registration
-Disallow: /static/*
-Disallow: /filter*
-
-User-agent: Googlebot
-Disallow: /model_catalog
-Disallow: /parts_catalog
-Disallow: /registration
-Disallow: /static/*
-Disallow: /filter*
-
+# *
 User-agent: *
-Disallow: /model_catalog
-Disallow: /parts_catalog
-Disallow: /registration
-Disallow: /static/*
-Disallow: /filter*
+Allow: /
 
-Sitemap: https://avcdn.av.by/sitemap/sitemap.xml
+# *
+User-agent: *
+Disallow: /filter
+
+# *
+User-agent: *
+Disallow: /new_ad
+
+# *
+User-agent: *
+Disallow: /registration
+
+# *
+User-agent: *
+Disallow: /server-sitemap.xml
+
+# Host
+Host: http://167.99.141.158
+
+# Sitemaps
+Sitemap: http://167.99.141.158/sitemap.xml
+Sitemap: http://167.99.141.158/server-sitemap.xml

@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
+import Head from 'next/head'
 import DropDown from '../components/reusable/DropDown'
 import { createAgeArr, createVolumeArr } from '../components/reusable/utils'
 import Input from '../components/reusable/Input'
@@ -97,77 +98,84 @@ const newAd = () => {
   }
 
   return (
-    <div className="ad-editor">
-      <h1 className="ad-editor__header">
-        Новое объявление о продаже автомобиля
-      </h1>
-      <div className="ad-editor__content">
-        <DropDown
-          title={mark}
-          defaultTitle={'Марка'}
-          children={markList}
-          onSelect={markSelected}
-        />
-        <DropDown
-          title={model}
-          defaultTitle={'Модель'}
-          children={modelList}
-          onSelect={modelSelected}
-        />
-        <DropDown
-          title={generation}
-          defaultTitle={'Поколение'}
-          children={generationList}
-          onSelect={(value) => setGeneration(value)}
-        />
-        <DropDown
-          title={year}
-          defaultTitle={'Год'}
-          children={createAgeArr()}
-          onSelect={(value) => setYear(value)}
-        />
-        <DropDown
-          title={volume}
-          defaultTitle={'Объём'}
-          children={createVolumeArr()}
-          onSelect={(value) => setVolume(value)}
-        />
-        <Input title={'Цена'} value={cost} setValue={setCost} />
-        <textarea
-          className="ad-editor__comment textarea"
-          placeholder="Комметарий"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-        ></textarea>
-        <div className="ad-editor__files">
-          <label className="ad-editor__upload">
-            <input
-              type="file"
-              multiple
-              onChange={(e) => {
-                console.log(e.target.files)
-                setUploadFiles(e.target.files)
-                const fileNames = Array.from(e.target.files).map(
-                  (file) => file.name
-                )
-                setFileTitles(fileNames)
-              }}
-            />
-            Выберите файлы
-          </label>
-          <div className="ad-editor__files-title">{fileTitles.join(', ')}</div>
-        </div>
-        <div className="ad-editor__control">
-          <button
-            className="ad-editor__submit"
-            onClick={submit}
-            disabled={isSendDisabled}
-          >
-            Отправить
-          </button>
+    <>
+      <Head>
+        <title>av.by</title>
+      </Head>
+      <div className="ad-editor">
+        <h1 className="ad-editor__header">
+          Новое объявление о продаже автомобиля
+        </h1>
+        <div className="ad-editor__content">
+          <DropDown
+            title={mark}
+            defaultTitle={'Марка'}
+            children={markList}
+            onSelect={markSelected}
+          />
+          <DropDown
+            title={model}
+            defaultTitle={'Модель'}
+            children={modelList}
+            onSelect={modelSelected}
+          />
+          <DropDown
+            title={generation}
+            defaultTitle={'Поколение'}
+            children={generationList}
+            onSelect={(value) => setGeneration(value)}
+          />
+          <DropDown
+            title={year}
+            defaultTitle={'Год'}
+            children={createAgeArr()}
+            onSelect={(value) => setYear(value)}
+          />
+          <DropDown
+            title={volume}
+            defaultTitle={'Объём'}
+            children={createVolumeArr()}
+            onSelect={(value) => setVolume(value)}
+          />
+          <Input title={'Цена'} value={cost} setValue={setCost} />
+          <textarea
+            className="ad-editor__comment textarea"
+            placeholder="Комметарий"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          ></textarea>
+          <div className="ad-editor__files">
+            <label className="ad-editor__upload">
+              <input
+                type="file"
+                multiple
+                onChange={(e) => {
+                  console.log(e.target.files)
+                  setUploadFiles(e.target.files)
+                  const fileNames = Array.from(e.target.files).map(
+                    (file) => file.name
+                  )
+                  setFileTitles(fileNames)
+                }}
+              />
+              Выберите файлы
+            </label>
+            <div className="ad-editor__files-title">
+              {fileTitles.join(', ')}
+            </div>
+          </div>
+          <div className="ad-editor__control">
+            <button
+              className="ad-editor__submit"
+              onClick={submit}
+              disabled={isSendDisabled}
+            >
+              Отправить
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

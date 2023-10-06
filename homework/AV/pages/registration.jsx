@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -26,7 +27,14 @@ const Registration = () => {
     }, 3000)
   }, router)
 
-  return <h1>{message}</h1>
+  return (
+    <>
+      <Head>
+        <title>av.by</title>
+      </Head>
+      <h1>{message}</h1>
+    </>
+  )
 }
 
 export default Registration
