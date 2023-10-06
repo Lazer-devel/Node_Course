@@ -79,19 +79,19 @@ const Component = ({ initData }) => {
         <div className="card">
           <div className="gallery">
             <div className="gallery__previous" onClick={prevClick}>
-              <Image
+              <img
                 className="gallery__icon"
-                width={25}
-                height={27}
+                width="25px"
+                height="27px"
                 src="/leftArrow.png"
                 alt=""
               />
             </div>
             <div className="gallery__next" onClick={nextClick}>
-              <Image
+              <img
                 className="gallery__icon"
-                width={25}
-                height={27}
+                width="25px"
+                height="27px"
                 src="/rigthArrow.png"
                 alt=""
               />
