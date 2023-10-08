@@ -16,9 +16,11 @@ function Input({ title, value, setValue }) {
             setValue(str)
           }
         }}
+        data-testid="input"
       />
       <span
         className={`input__subtitle ${value ? 'input__subtitle--visible' : ''}`}
+        data-testid="subtitle"
       >
         {title}
       </span>

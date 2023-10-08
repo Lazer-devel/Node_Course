@@ -8,12 +8,12 @@ export function createInitData(title, subtitle, isInActive) {
 
 function LinkList({ commonUrl, links, className = '' }) {
   return (
-    <ul className={`link-list ${className}`}>
+    <ul className={`link-list ${className}`} data-testid="link-list">
       {links.map(({ title, subtitle, isInActive }) => (
         <li key={title} className="link-list__item">
           <Link
             className={`link-list__link ${
-              isInActive && 'link-list__link--disabled'
+              isInActive ? '' : 'link-list__link--disabled'
             }`}
             href={`${commonUrl}${title}`}
             title={title}
@@ -22,6 +22,7 @@ function LinkList({ commonUrl, links, className = '' }) {
                 e.preventDefault()
               }
             }}
+            data-testid="link"
           >
             <span className="link-list__title">{title}</span>
             <span className="link-list__subtitle">{subtitle}</span>

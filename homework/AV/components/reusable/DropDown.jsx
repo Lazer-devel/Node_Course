@@ -27,6 +27,7 @@ function DropDown({
       }}
       disabled={!children.length}
       onBlur={() => setIsDropDownActive(false)}
+      data-testId="button"
     >
       <span
         className={`dropdown__title ${title ? 'dropdown__title--offset' : ''}`}
@@ -41,7 +42,7 @@ function DropDown({
         </span>
       </span>
 
-      <ul className={contentWrapperClasses}>
+      <ul className={contentWrapperClasses} data-testid="child-wrapper">
         {children.map((child, i) => (
           <li
             key={i}
